@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <!--
   WikiSwipe — Tinder für Wikipedia
-  =====================================
-  GitHub Pages Deployment:
-  1. Erstelle ein neues Repository auf github.com
-  2. Lade diese Datei als index.html hoch
-  3. Settings → Pages → Source: "Deploy from branch" → main / root
-  4. Nach ~1 Minute erreichbar unter https://[nutzername].github.io/[repo]/
+  ─────────────────────────────────
+  GitHub Pages:
+  1. Neues Repository erstellen
+  2. Diese Datei als index.html hochladen
+  3. Settings → Pages → Source: main / root
+  4. ~1 Min warten → https://[name].github.io/[repo]/
 -->
 <html lang="de">
 <head>
@@ -28,9 +28,11 @@
       --skip:    #f25f5c;
     }
 
-    html, body { height: 100%; background: var(--bg); color: var(--text);
+    html, body {
+      height: 100%; background: var(--bg); color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      overflow: hidden; }
+      overflow: hidden;
+    }
     body { display: flex; flex-direction: column; }
 
     /* ── Header ── */
@@ -42,8 +44,8 @@
     .logo em { color: var(--accent); font-style: normal; }
     .header-right { display: flex; gap: 8px; align-items: center; }
     .lang-select {
-      background: var(--sur2); border: 1px solid var(--border);
-      color: var(--text); padding: 4px 8px; border-radius: 8px; font-size: 12px; cursor: pointer;
+      background: var(--sur2); border: 1px solid var(--border); color: var(--text);
+      padding: 4px 8px; border-radius: 8px; font-size: 12px; cursor: pointer;
     }
     .icon-btn {
       background: var(--sur2); border: 1px solid var(--border); color: var(--muted);
@@ -52,81 +54,77 @@
     }
     .icon-btn:hover { color: var(--text); }
 
-    /* ── Main / Views ── */
+    /* ── Views ── */
     .main { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
     .view { display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
     .view.active { display: flex; }
 
-    /* ── Card Stack ── */
+    /* ── Stack ── */
     .stack-wrap {
       flex: 1; position: relative;
       display: flex; align-items: center; justify-content: center;
       padding: 14px 18px 6px; min-height: 0;
     }
 
+    /* Every card is absolute, z-index controls stacking */
     .card {
       position: absolute;
       width: min(370px, calc(100vw - 36px));
       height: min(560px, calc(100svh - 180px));
-      border-radius: 18px;
-      overflow: hidden;
+      border-radius: 18px; overflow: hidden;
       box-shadow: 0 20px 56px rgba(0,0,0,.6);
-      transform-origin: center 85%;
-      will-change: transform;
       background: var(--surface);
       display: flex; flex-direction: column;
+      /* no transition by default — set via JS when needed */
     }
-
-    /* swipe-out animations */
+    .card.snap-back {
+      transition: transform .28s cubic-bezier(.25,.46,.45,.94);
+    }
     .card.fly-right {
-      transition: transform .42s cubic-bezier(.25,.46,.45,.94), opacity .42s !important;
-      transform: translateX(160%) rotate(26deg) !important; opacity: 0 !important;
+      transition: transform .42s cubic-bezier(.4,0,1,1), opacity .42s !important;
+      transform: translateX(160%) rotate(26deg) !important;
+      opacity: 0 !important;
     }
     .card.fly-left {
-      transition: transform .42s cubic-bezier(.25,.46,.45,.94), opacity .42s !important;
-      transform: translateX(-160%) rotate(-26deg) !important; opacity: 0 !important;
+      transition: transform .42s cubic-bezier(.4,0,1,1), opacity .42s !important;
+      transform: translateX(-160%) rotate(-26deg) !important;
+      opacity: 0 !important;
     }
 
-    /* Card image */
+    /* Card anatomy */
     .card-img {
-      width: 100%; height: 160px; object-fit: cover;
-      display: block; flex-shrink: 0; background: var(--sur2);
+      width: 100%; height: 155px; object-fit: cover; display: block;
+      flex-shrink: 0; background: var(--sur2);
       pointer-events: none; -webkit-user-drag: none;
     }
     .card-img-placeholder {
-      width: 100%; height: 120px; flex-shrink: 0;
+      width: 100%; height: 110px; flex-shrink: 0;
       background: linear-gradient(140deg, var(--sur2), var(--surface));
-      display: flex; align-items: center; justify-content: center; font-size: 52px;
+      display: flex; align-items: center; justify-content: center; font-size: 50px;
     }
-
-    /* Scrollable text area */
+    /* Scrollable text */
     .card-scroll {
-      flex: 1; overflow-y: auto; padding: 14px 16px 40px;
+      flex: 1; overflow-y: auto; padding: 14px 16px 44px;
       -webkit-overflow-scrolling: touch;
     }
     .card-scroll::-webkit-scrollbar { width: 3px; }
     .card-scroll::-webkit-scrollbar-thumb { background: var(--sur2); border-radius: 2px; }
 
-    .card-label {
-      font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1.1px; color: var(--accent); margin-bottom: 6px;
-    }
+    .card-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.1px; color: var(--accent); margin-bottom: 6px; }
     .card-title { font-size: 17px; font-weight: 800; line-height: 1.25; margin-bottom: 4px; }
     .card-desc  { font-size: 11.5px; color: var(--muted); margin-bottom: 10px; }
-    .card-extract {
-      font-size: 13.5px; line-height: 1.68; color: #ccc;
-    }
+    .card-extract { font-size: 13.5px; line-height: 1.7; color: #ccc; }
 
-    /* Fade + hint at bottom of card */
+    /* Bottom fade + hint */
     .card-fade {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 52px;
+      position: absolute; bottom: 0; left: 0; right: 0; height: 50px;
       background: linear-gradient(transparent, var(--surface));
       pointer-events: none; border-radius: 0 0 18px 18px;
     }
     .card-hint {
       position: absolute; bottom: 10px; left: 0; right: 0;
-      text-align: center; font-size: 10.5px; color: var(--muted);
-      font-weight: 600; letter-spacing: .4px; pointer-events: none;
+      text-align: center; font-size: 10px; color: var(--muted);
+      font-weight: 600; letter-spacing: .3px; pointer-events: none;
     }
 
     /* Swipe badges */
@@ -134,7 +132,7 @@
       position: absolute; top: 16px;
       padding: 5px 12px; border-radius: 8px;
       font-size: 14px; font-weight: 800; border: 2.5px solid;
-      opacity: 0; pointer-events: none; z-index: 5;
+      opacity: 0; pointer-events: none;
     }
     .badge-save { left: 16px; color: var(--save); border-color: var(--save); }
     .badge-skip { right: 16px; color: var(--skip); border-color: var(--skip); }
@@ -172,10 +170,8 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .pill-btn {
       padding: 10px 22px; background: var(--accent); color: #fff;
-      border: none; border-radius: 12px; font-size: 14px; font-weight: 700;
-      cursor: pointer; margin-top: 4px;
+      border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 4px;
     }
-    .pill-btn:hover { opacity: .85; }
 
     /* ── Bottom Nav ── */
     .bottom-nav { display: flex; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--bg); }
@@ -187,10 +183,10 @@
     }
     .nav-tab .ni { font-size: 20px; }
     .nav-tab.active { color: var(--accent); }
-    .badge {
+    .nbadge {
       display: inline-block; background: var(--accent); color: #fff;
-      font-size: 9px; font-weight: 800; padding: 1px 5px;
-      border-radius: 10px; min-width: 16px; text-align: center; line-height: 14px;
+      font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 10px;
+      min-width: 16px; text-align: center; line-height: 14px;
     }
 
     /* ── Saved View ── */
@@ -210,9 +206,8 @@
     }
     .saved-card:hover { background: var(--sur2); }
     .saved-thumb {
-      width: 56px; height: 56px; border-radius: 9px; object-fit: cover;
-      flex-shrink: 0; background: var(--sur2);
-      display: flex; align-items: center; justify-content: center; font-size: 24px;
+      width: 56px; height: 56px; border-radius: 9px; object-fit: cover; flex-shrink: 0;
+      background: var(--sur2); display: flex; align-items: center; justify-content: center; font-size: 24px;
     }
     .saved-info { flex: 1; min-width: 0; }
     .saved-title { font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -228,11 +223,9 @@
     .modal {
       position: fixed; inset: 0; z-index: 50; background: var(--bg);
       display: flex; flex-direction: column;
-      transform: translateY(100%);
-      transition: transform .32s cubic-bezier(.32,.72,0,1);
+      transform: translateY(100%); transition: transform .32s cubic-bezier(.32,.72,0,1);
     }
     .modal.open { transform: translateY(0); }
-
     .modal-header {
       display: flex; align-items: center; gap: 10px;
       padding: 12px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
@@ -244,49 +237,34 @@
     }
     .modal-ttl { flex: 1; font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .modal-save-btn {
-      padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
-      cursor: pointer; border: 2px solid var(--save); background: none; color: var(--save);
+      padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer;
+      border: 2px solid var(--save); background: none; color: var(--save);
       white-space: nowrap; transition: background .2s, color .2s; flex-shrink: 0;
     }
     .modal-save-btn.is-saved { background: var(--save); color: #0c0c0e; }
-
     .modal-body { flex: 1; overflow-y: auto; }
-    .modal-hero { width: 100%; max-height: 230px; object-fit: cover; display: block; }
-
+    .modal-hero { width: 100%; max-height: 220px; object-fit: cover; display: block; }
     .modal-content { padding: 18px 18px 40px; }
     .modal-content h1 { font-size: 22px; font-weight: 800; line-height: 1.2; margin-bottom: 4px; }
-    .modal-desc-tag   { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
-
-    /* Full extract rendered as readable paragraphs */
-    .modal-extract {
-      font-size: 15px; line-height: 1.75; color: #d4d4e0; margin-bottom: 28px;
-    }
+    .modal-desc-tag { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+    .modal-extract { font-size: 15px; line-height: 1.75; color: #d4d4e0; margin-bottom: 28px; }
     .modal-extract p { margin-bottom: 1em; }
     .modal-extract p:last-child { margin-bottom: 0; }
-
-    /* Additional sections */
     .section-block { margin-bottom: 24px; }
     .section-block h2 {
-      font-size: 14px; font-weight: 800; text-transform: uppercase;
-      letter-spacing: .9px; color: var(--muted); margin-bottom: 10px;
-      padding-bottom: 6px; border-bottom: 1px solid var(--border);
+      font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .9px;
+      color: var(--muted); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
     }
     .section-body { font-size: 14px; line-height: 1.72; color: #bbb; }
     .section-body p { margin-bottom: .9em; }
-    .section-body p:last-child { margin-bottom: 0; }
-
-    .sec-label {
-      font-size: 10px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1.1px; color: var(--muted); margin-bottom: 10px;
-    }
+    .sec-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.1px; color: var(--muted); margin-bottom: 10px; }
     .related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
     .rel-pill {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 9px 11px; font-size: 12.5px; font-weight: 600;
-      cursor: pointer; transition: background .15s; line-height: 1.3;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 9px 11px; font-size: 12.5px; font-weight: 600; cursor: pointer; line-height: 1.3;
+      transition: background .15s;
     }
     .rel-pill:hover { background: var(--sur2); color: var(--accent); }
-
     .wiki-link {
       display: flex; align-items: center; justify-content: center; gap: 6px;
       padding: 13px; background: var(--surface); border: 1px solid var(--border);
@@ -299,10 +277,10 @@
     .toast {
       position: fixed; bottom: 76px; left: 50%;
       transform: translateX(-50%) translateY(14px);
-      background: var(--surface); border: 1px solid var(--border);
-      color: var(--text); padding: 8px 18px; border-radius: 20px;
-      font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none;
-      z-index: 200; transition: opacity .25s, transform .25s; white-space: nowrap;
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 600;
+      opacity: 0; pointer-events: none; z-index: 200;
+      transition: opacity .25s, transform .25s; white-space: nowrap;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -329,7 +307,7 @@
 
 <main class="main">
 
-  <!-- Discover -->
+  <!-- Discover View -->
   <div class="view active" id="view-discover">
     <div class="stack-wrap" id="stackWrap">
       <div class="center-state" id="loadingState">
@@ -339,12 +317,12 @@
     </div>
     <div class="actions">
       <button class="act-btn btn-skip" onclick="doSkip()" title="Überspringen">✕</button>
-      <button class="act-btn btn-read"  onclick="doRead()"  title="Vollständig lesen">📖</button>
-      <button class="act-btn btn-save"  onclick="doSave()"  title="Speichern">♥</button>
+      <button class="act-btn btn-read" onclick="doRead()"  title="Vollständig lesen">📖</button>
+      <button class="act-btn btn-save" onclick="doSave()"  title="Speichern">♥</button>
     </div>
   </div>
 
-  <!-- Saved -->
+  <!-- Saved View -->
   <div class="view" id="view-saved">
     <div class="view-header">
       <div class="view-header-row">
@@ -363,8 +341,7 @@
     <span class="ni">🔍</span>Entdecken
   </button>
   <button class="nav-tab" id="tab-saved" onclick="switchView('saved')">
-    <span class="ni">📚</span>
-    <span id="badgeWrap"></span>Gespeichert
+    <span class="ni">📚</span><span id="badgeWrap"></span>Gespeichert
   </button>
 </nav>
 
@@ -380,16 +357,12 @@
     <div class="modal-content">
       <h1 id="modalH1"></h1>
       <div class="modal-desc-tag" id="modalDesc"></div>
-
       <div class="modal-extract" id="modalExtract"></div>
-
       <div id="modalSections"></div>
-
       <div class="sec-label">Verwandte Themen</div>
       <div class="related-grid" id="relatedGrid">
         <div style="color:var(--muted);font-size:13px;grid-column:span 2">Lädt…</div>
       </div>
-
       <a class="wiki-link" id="modalWikiLink" href="#" target="_blank" rel="noopener">
         📄 Vollständig auf Wikipedia lesen ↗
       </a>
@@ -400,26 +373,33 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  STATE
-// ═══════════════════════════════════════════════
-let lang       = localStorage.getItem('ws_lang') || 'en';
-let articles   = [];
-let currentIdx = 0;
-let saved      = JSON.parse(localStorage.getItem('ws_saved') || '[]');
-let modalArt   = null;
-let isLoading  = false;
+// ══════════════════════════════════════════════
+let lang        = localStorage.getItem('ws_lang') || 'en';
+let articles    = [];
+let currentIdx  = 0;
+let saved       = JSON.parse(localStorage.getItem('ws_saved') || '[]');
+let modalArt    = null;
+let isLoading   = false;
+let topCardEl   = null;  // always points to the current top card in the DOM
 
-// drag state
-let dragStartX   = 0, dragStartY = 0;
-let isDragging   = false;
-let swipeDir     = null; // null | 'h' | 'v'
-let didCommit    = false;
-let activeCard   = null;
+// ── Drag state ──────────────────────────────
+// Three-state tap vs scroll vs swipe detection:
+//   hadMovement: any movement > threshold  → false means pure tap
+//   swipeDir:    'h' | 'v' | null          → direction once committed
+//   didHSwipe:   true once horizontal drag is confirmed
+let isDragging  = false;
+let hadMovement = false;   // any finger movement at all
+let swipeDir    = null;
+let didHSwipe   = false;
+let activeCard  = null;
+let dragStartX  = 0;
+let dragStartY  = 0;
 
-// ═══════════════════════════════════════════════
-//  API — batch fetch with FULL intro extract
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  API
+// ══════════════════════════════════════════════
 function apiBase()  { return `https://${lang}.wikipedia.org/w/api.php`; }
 function restBase() { return `https://${lang}.wikipedia.org/api/rest_v1`; }
 
@@ -429,28 +409,26 @@ async function fetchRandomTitles(n = 18) {
   return d.query.random.map(p => p.title);
 }
 
-// Batch call: get full intro extract + images for multiple titles at once
+// Batch: full intro extract + image for up to 20 titles at once
 async function fetchBatch(titles) {
+  if (!titles.length) return [];
   const joined = titles.map(t => encodeURIComponent(t)).join('|');
   const url = `${apiBase()}?action=query`
     + `&titles=${joined}`
     + `&prop=extracts|pageimages|description|info`
     + `&exintro=true&explaintext=true`
     + `&piprop=thumbnail|original&pithumbsize=640`
-    + `&inprop=url`
-    + `&redirects=1&format=json&origin=*`;
+    + `&inprop=url&redirects=1&format=json&origin=*`;
   const d = await fetch(url).then(r => r.json());
   const pages = d.query?.pages || {};
   return Object.values(pages).filter(p =>
-    !p.missing && p.extract && p.extract.trim().length > 120
+    !p.missing && p.extract && p.extract.trim().length > 150
   );
 }
 
-// Mobile-sections for the article reader (rich content)
 async function fetchSections(title) {
   try {
-    const url = `${restBase()}/page/mobile-sections/${encodeURIComponent(title)}`;
-    const d = await fetch(url).then(r => r.json());
+    const d = await fetch(`${restBase()}/page/mobile-sections/${encodeURIComponent(title)}`).then(r => r.json());
     return d;
   } catch { return null; }
 }
@@ -465,9 +443,9 @@ async function fetchRelated(title) {
   } catch { return []; }
 }
 
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  LOAD
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 async function loadArticles(reset = true) {
   if (isLoading) return;
   isLoading = true;
@@ -475,12 +453,11 @@ async function loadArticles(reset = true) {
   if (reset) { articles = []; currentIdx = 0; clearStack(); }
 
   try {
-    const titles  = await fetchRandomTitles(18);
-    // Batch in two halves to stay under URL length limits
-    const half = Math.ceil(titles.length / 2);
+    const titles = await fetchRandomTitles(18);
+    const mid    = Math.ceil(titles.length / 2);
     const [a, b] = await Promise.all([
-      fetchBatch(titles.slice(0, half)),
-      fetchBatch(titles.slice(half))
+      fetchBatch(titles.slice(0, mid)),
+      fetchBatch(titles.slice(mid))
     ]);
     const good = [...a, ...b].filter(p => p.extract.length > 150);
     articles = reset ? good : [...articles, ...good];
@@ -496,58 +473,61 @@ async function loadMore() {
   isLoading = true;
   try {
     const titles = await fetchRandomTitles(14);
-    const half   = Math.ceil(titles.length / 2);
-    const [a, b] = await Promise.all([fetchBatch(titles.slice(0, half)), fetchBatch(titles.slice(half))]);
+    const mid    = Math.ceil(titles.length / 2);
+    const [a, b] = await Promise.all([fetchBatch(titles.slice(0, mid)), fetchBatch(titles.slice(mid))]);
     articles = [...articles, ...[...a, ...b].filter(p => p.extract.length > 150)];
   } catch(e) {}
   isLoading = false;
 }
 
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  RENDER STACK
-// ═══════════════════════════════════════════════
+//  slice[0] = current article = TOP card (highest z-index)
+//  slice[1] = next            = middle
+//  slice[2] = after next      = bottom (decorative)
+// ══════════════════════════════════════════════
 function clearStack() {
-  document.querySelectorAll('.card').forEach(c => c.remove());
+  document.querySelectorAll('#stackWrap .card').forEach(c => c.remove());
+  topCardEl = null;
 }
 
 function renderStack() {
   clearStack();
-  const wrap = document.getElementById('stackWrap');
+  const wrap  = document.getElementById('stackWrap');
   const slice = articles.slice(currentIdx, currentIdx + 3);
+
   if (!slice.length) { showEmpty(); return; }
 
-  // Append back-to-front so top card is last child
-  [...slice].reverse().forEach((art, ri) => {
-    const card  = buildCard(art);
-    const depth = ri; // 0 = top (last appended), 2 = bottom
-    if (depth === 0) {
-      card.style.zIndex = '3';
-      // no transform — stays in place
-    } else if (depth === 1) {
-      card.style.zIndex = '2';
+  // Append all cards; z-index makes slice[0] visually on top
+  slice.forEach((art, i) => {
+    const card = buildCard(art);
+    if (i === 0) {
+      card.style.zIndex    = '3';
+      card.style.transform = 'none';
+      topCardEl = card;           // ← always the current top card
+    } else if (i === 1) {
+      card.style.zIndex    = '2';
       card.style.transform = 'scale(0.94) translateY(18px)';
     } else {
-      card.style.zIndex = '1';
+      card.style.zIndex    = '1';
       card.style.transform = 'scale(0.88) translateY(36px)';
     }
     wrap.appendChild(card);
   });
 
-  attachDrag(wrap.querySelector('.card:last-child'));
+  attachDrag(topCardEl);
+
   if (currentIdx + 5 >= articles.length) loadMore();
 }
 
 function buildCard(art) {
-  const div = document.createElement('div');
+  const div   = document.createElement('div');
   div.className = 'card';
 
-  const emoji = guessEmoji(art);
+  const emoji   = guessEmoji(art);
   const imgHtml = art.thumbnail?.source
     ? `<img class="card-img" src="${esc(art.thumbnail.source)}" alt="" draggable="false">`
     : `<div class="card-img-placeholder">${emoji}</div>`;
-
-  // Format extract into readable paragraphs on the card
-  const extract = art.extract || '';
 
   div.innerHTML = `
     ${imgHtml}
@@ -555,131 +535,159 @@ function buildCard(art) {
       <div class="card-label">Wikipedia · ${lang.toUpperCase()}</div>
       <div class="card-title">${esc(art.title)}</div>
       ${art.description ? `<div class="card-desc">${esc(art.description)}</div>` : ''}
-      <div class="card-extract">${esc(extract)}</div>
+      <div class="card-extract">${esc(art.extract || '')}</div>
     </div>
     <div class="card-fade"></div>
-    <div class="card-hint">← überspringen &nbsp;·&nbsp; 📖 lesen &nbsp;·&nbsp; speichern →</div>
+    <div class="card-hint">← skip &nbsp;·&nbsp; tippen zum Lesen &nbsp;·&nbsp; save →</div>
     <div class="swipe-badge badge-save">SAVE ♥</div>
     <div class="swipe-badge badge-skip">SKIP ✕</div>
   `;
-
   return div;
 }
 
-// ═══════════════════════════════════════════════
-//  DRAG / SWIPE
-//  Direction-aware: vertical touch → scroll the card text
-//                   horizontal drag → swipe the card away
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  DRAG — direction-aware
+//  Tap:           no movement   → open article
+//  Vertical drag: swipeDir='v'  → scroll card text, no swipe
+//  Horizontal:    swipeDir='h'  → swipe the card
+// ══════════════════════════════════════════════
 function attachDrag(card) {
   if (!card) return;
-  card.addEventListener('mousedown',  onStart);
-  card.addEventListener('touchstart', onStart, { passive: true });
+  card.addEventListener('mousedown',  onDragStart);
+  card.addEventListener('touchstart', onDragStart, { passive: true });
 }
 
-function onStart(e) {
+function onDragStart(e) {
+  // Ignore if click is inside the scrollable area and it's a vertical intent
   activeCard  = e.currentTarget;
   isDragging  = true;
-  didCommit   = false;
+  hadMovement = false;
   swipeDir    = null;
-  dragStartX  = e.clientX  ?? e.touches[0].clientX;
-  dragStartY  = e.clientY  ?? e.touches[0].clientY;
+  didHSwipe   = false;
+  dragStartX  = e.clientX ?? e.touches[0].clientX;
+  dragStartY  = e.clientY ?? e.touches[0].clientY;
 
-  document.addEventListener('mousemove',  onMove);
-  document.addEventListener('touchmove',  onMove, { passive: false });
-  document.addEventListener('mouseup',    onEnd);
-  document.addEventListener('touchend',   onEnd);
+  document.addEventListener('mousemove',  onDragMove);
+  document.addEventListener('touchmove',  onDragMove, { passive: false });
+  document.addEventListener('mouseup',    onDragEnd);
+  document.addEventListener('touchend',   onDragEnd);
 }
 
-function onMove(e) {
+function onDragMove(e) {
   if (!isDragging || !activeCard) return;
 
-  const cx = e.clientX ?? e.touches[0].clientX;
-  const cy = e.clientY ?? e.touches[0].clientY;
-  const dx = cx - dragStartX;
-  const dy = cy - dragStartY;
-  const adx = Math.abs(dx), ady = Math.abs(dy);
+  const cx  = e.clientX ?? e.touches[0].clientX;
+  const cy  = e.clientY ?? e.touches[0].clientY;
+  const dx  = cx - dragStartX;
+  const dy  = cy - dragStartY;
+  const adx = Math.abs(dx);
+  const ady = Math.abs(dy);
+
+  // Record that the finger actually moved
+  if (adx > 4 || ady > 4) hadMovement = true;
 
   // Determine direction on first significant movement
   if (!swipeDir) {
-    if (adx < 6 && ady < 6) return; // too small to decide yet
-    swipeDir = adx >= ady ? 'h' : 'v';
+    if (adx < 8 && ady < 8) return; // wait for clear intent
+    swipeDir = (adx >= ady) ? 'h' : 'v';
   }
 
-  if (swipeDir === 'v') return; // let browser scroll the card text
+  if (swipeDir === 'v') return; // let the card-scroll handle vertical scroll
 
-  // Horizontal swipe committed
-  e.preventDefault();
-  didCommit = true;
+  // Committed to horizontal swipe
+  e.preventDefault();  // stop page from scrolling
+  didHSwipe = true;
 
   const rot = dx / 16;
-  activeCard.style.transition = 'none';
-  activeCard.style.transform  = `translateX(${dx}px) translateY(${dy * 0.2}px) rotate(${rot}deg)`;
+  activeCard.style.transform = `translateX(${dx}px) translateY(${dy * 0.18}px) rotate(${rot}deg)`;
 
   const strength = Math.min(adx / 85, 1);
   activeCard.querySelector('.badge-save').style.opacity = dx >  12 ? strength : 0;
   activeCard.querySelector('.badge-skip').style.opacity = dx < -12 ? strength : 0;
 }
 
-function onEnd(e) {
-  if (!isDragging || !activeCard) return;
+function onDragEnd(e) {
+  if (!isDragging) return;
   isDragging = false;
 
-  document.removeEventListener('mousemove',  onMove);
-  document.removeEventListener('touchmove',  onMove);
-  document.removeEventListener('mouseup',    onEnd);
-  document.removeEventListener('touchend',   onEnd);
+  document.removeEventListener('mousemove',  onDragMove);
+  document.removeEventListener('touchmove',  onDragMove);
+  document.removeEventListener('mouseup',    onDragEnd);
+  document.removeEventListener('touchend',   onDragEnd);
 
-  if (!didCommit) {
-    // Tap → open article
-    activeCard.style.transform = '';
-    const card = activeCard;
+  if (!activeCard) return;
+
+  // ── Pure tap: no movement at all ──────────
+  if (!hadMovement) {
     activeCard = null;
     openArticle(articles[currentIdx]);
     return;
   }
 
+  // ── Vertical scroll or indecisive: snap back ──
+  if (!didHSwipe) {
+    activeCard = null;
+    return; // card position unchanged (browser handled the scroll)
+  }
+
+  // ── Horizontal: check threshold ───────────
   const cx = e.clientX ?? e.changedTouches?.[0]?.clientX ?? dragStartX;
   const dx = cx - dragStartX;
-  const THRESHOLD = 88;
+  const THRESHOLD = 90;
 
-  if (dx > THRESHOLD)       flyAway('right');
-  else if (dx < -THRESHOLD) flyAway('left');
-  else {
-    // Snap back
-    activeCard.style.transition = 'transform .28s cubic-bezier(.25,.46,.45,.94)';
-    activeCard.style.transform  = '';
-    activeCard.querySelector('.badge-save').style.opacity = 0;
-    activeCard.querySelector('.badge-skip').style.opacity = 0;
-    activeCard = null;
-  }
-}
-
-function flyAway(dir) {
-  if (!activeCard) return;
-  const art  = articles[currentIdx];
   const card = activeCard;
   activeCard = null;
 
-  card.classList.add(dir === 'right' ? 'fly-right' : 'fly-left');
-  if (dir === 'right') { saveArticle(art); showToast('♥ Gespeichert!'); }
-  else                 { showToast('Weiter…'); }
-
-  setTimeout(() => { currentIdx++; renderStack(); }, 380);
+  if (dx > THRESHOLD) {
+    triggerFly(card, 'right');
+  } else if (dx < -THRESHOLD) {
+    triggerFly(card, 'left');
+  } else {
+    // Not far enough → snap back
+    card.classList.add('snap-back');
+    card.style.transform = 'none';
+    card.querySelector('.badge-save').style.opacity = 0;
+    card.querySelector('.badge-skip').style.opacity = 0;
+    setTimeout(() => card.classList.remove('snap-back'), 300);
+  }
 }
 
-// ═══════════════════════════════════════════════
-//  BUTTON ACTIONS + KEYBOARD
-// ═══════════════════════════════════════════════
+function triggerFly(card, dir) {
+  // Capture the article NOW before incrementing index
+  const art = articles[currentIdx];
+
+  card.style.transition = ''; // let CSS classes handle animation
+  card.classList.add(dir === 'right' ? 'fly-right' : 'fly-left');
+
+  if (dir === 'right') {
+    saveArticle(art);
+    showToast('♥ Gespeichert!');
+  } else {
+    showToast('Weiter…');
+  }
+
+  setTimeout(() => {
+    currentIdx++;
+    renderStack();
+  }, 380);
+}
+
+// ══════════════════════════════════════════════
+//  BUTTONS + KEYBOARD
+// ══════════════════════════════════════════════
 function doSkip() {
-  activeCard = document.querySelector('#stackWrap .card:last-child');
-  if (activeCard) { didCommit = true; flyAway('left'); }
+  if (!topCardEl || !articles[currentIdx]) return;
+  triggerFly(topCardEl, 'left');
+  topCardEl = null; // renderStack will set a new one
 }
 function doSave() {
-  activeCard = document.querySelector('#stackWrap .card:last-child');
-  if (activeCard) { didCommit = true; flyAway('right'); }
+  if (!topCardEl || !articles[currentIdx]) return;
+  triggerFly(topCardEl, 'right');
+  topCardEl = null;
 }
-function doRead() { if (articles[currentIdx]) openArticle(articles[currentIdx]); }
+function doRead() {
+  if (articles[currentIdx]) openArticle(articles[currentIdx]);
+}
 
 document.addEventListener('keydown', e => {
   if (document.getElementById('articleModal').classList.contains('open')) {
@@ -688,93 +696,77 @@ document.addEventListener('keydown', e => {
   }
   if (e.key === 'ArrowLeft'  || e.key === 'a') doSkip();
   if (e.key === 'ArrowRight' || e.key === 'd') doSave();
-  if (e.key === 'ArrowUp'    || e.key === 'w' || e.key === ' ') { e.preventDefault(); doRead(); }
+  if (e.key === 'ArrowUp'    || e.key === 'w') { e.preventDefault(); doRead(); }
 });
 
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  ARTICLE MODAL
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 async function openArticle(art) {
   modalArt = art;
 
-  // Populate header & basics
   document.getElementById('modalTitle').textContent = art.title;
   document.getElementById('modalH1').textContent    = art.title;
   document.getElementById('modalDesc').textContent  = art.description || '';
 
-  // Extract: split by double newline into paragraphs
-  const extract = (art.extract || '').trim();
-  const paras   = extract.split(/\n\n+/).filter(Boolean);
-  document.getElementById('modalExtract').innerHTML =
-    paras.map(p => `<p>${esc(p)}</p>`).join('');
+  // Full intro as paragraphs
+  const paras = (art.extract || '').trim().split(/\n\n+/).filter(Boolean);
+  document.getElementById('modalExtract').innerHTML = paras.map(p => `<p>${esc(p)}</p>`).join('');
 
-  // Image
   const img = document.getElementById('modalImg');
   const src = art.original?.source || art.thumbnail?.source;
   if (src) { img.src = src; img.style.display = 'block'; } else { img.style.display = 'none'; }
 
-  // Wiki link
   const wurl = art.fullurl || `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(art.title)}`;
   document.getElementById('modalWikiLink').href = wurl;
 
-  // Save button state
   updateModalSaveBtn();
-
-  // Clear sections + related
   document.getElementById('modalSections').innerHTML = '';
   document.getElementById('relatedGrid').innerHTML =
     '<div style="color:var(--muted);font-size:13px;grid-column:span 2">Lädt…</div>';
-
-  // Scroll modal to top
   document.querySelector('.modal-body').scrollTop = 0;
-
   document.getElementById('articleModal').classList.add('open');
 
-  // Load extra sections + related in parallel
+  // Load sections + related in parallel
   const [sections, related] = await Promise.all([
     fetchSections(art.title),
     fetchRelated(art.title)
   ]);
-
-  renderSections(sections);
-  renderRelated(related, art.title);
+  renderModalSections(sections);
+  renderRelated(related);
 }
 
-function renderSections(data) {
+function renderModalSections(data) {
   const container = document.getElementById('modalSections');
   if (!data?.remaining?.sections?.length) return;
 
-  // Show first 4 sections (skip very short ones)
-  const sections = data.remaining.sections
+  data.remaining.sections
     .filter(s => s.text && s.text.length > 80)
-    .slice(0, 4);
+    .slice(0, 4)
+    .forEach(sec => {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = sec.text;
+      // Tidy up Wikipedia HTML
+      tmp.querySelectorAll('.mw-editsection, figure, .thumb, sup.reference, .reflist').forEach(el => el.remove());
+      tmp.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
+      tmp.querySelectorAll('[class]').forEach(el => el.removeAttribute('class'));
+      tmp.querySelectorAll('a').forEach(a => {
+        const span = document.createElement('span');
+        span.textContent = a.textContent;
+        a.replaceWith(span);
+      });
 
-  sections.forEach(sec => {
-    const div  = document.createElement('div');
-    div.className = 'section-block';
-
-    // Clean up Wikipedia HTML: strip inline styles, remove edit-section links, figures
-    const tmp = document.createElement('div');
-    tmp.innerHTML = sec.text;
-    tmp.querySelectorAll('.mw-editsection, figure, .thumb, sup, .reference').forEach(el => el.remove());
-    tmp.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
-    tmp.querySelectorAll('[class]').forEach(el => el.removeAttribute('class'));
-    // Convert relative links to plain text (no navigation inside modal)
-    tmp.querySelectorAll('a').forEach(a => {
-      const span = document.createElement('span');
-      span.textContent = a.textContent;
-      a.replaceWith(span);
+      const block = document.createElement('div');
+      block.className = 'section-block';
+      block.innerHTML = `<h2>${esc(sec.line || '')}</h2><div class="section-body">${tmp.innerHTML}</div>`;
+      container.appendChild(block);
     });
-
-    div.innerHTML = `<h2>${esc(sec.line || '')}</h2><div class="section-body">${tmp.innerHTML}</div>`;
-    container.appendChild(div);
-  });
 }
 
-function renderRelated(titles, currentTitle) {
+function renderRelated(titles) {
   const rg = document.getElementById('relatedGrid');
   rg.innerHTML = '';
-  if (!titles.length) {
+  if (!titles?.length) {
     rg.innerHTML = '<div style="color:var(--muted);font-size:13px;grid-column:span 2">Keine gefunden.</div>';
     return;
   }
@@ -811,37 +803,47 @@ function toggleModalSave() {
   persistSaved(); updateModalSaveBtn(); updateBadge();
 }
 
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  SAVE
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function saveArticle(art, withToast = true) {
   if (saved.some(s => s.title === art.title)) return;
-  saved.push({ title: art.title, description: art.description || '', thumbnail: art.thumbnail, fullurl: art.fullurl, savedAt: Date.now() });
+  saved.push({
+    title: art.title,
+    description: art.description || '',
+    thumbnail: art.thumbnail,
+    fullurl: art.fullurl,
+    savedAt: Date.now()
+  });
   persistSaved(); updateBadge();
   if (withToast) showToast('♥ Gespeichert!');
 }
-
 function persistSaved() { localStorage.setItem('ws_saved', JSON.stringify(saved)); }
 
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  SAVED VIEW
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function renderSaved() {
   const list = document.getElementById('savedList');
   document.getElementById('savedCount').textContent = `${saved.length} Artikel gespeichert`;
   if (!saved.length) {
-    list.innerHTML = `<div class="saved-empty"><div class="big">📚</div><h3>Noch leer</h3><p>Swipe nach rechts oder tippe ♥, um Artikel zu speichern.</p></div>`;
+    list.innerHTML = `<div class="saved-empty"><div class="big">📚</div><h3>Noch leer</h3><p>Swipe rechts oder tippe ♥, um Artikel zu speichern.</p></div>`;
     return;
   }
   list.innerHTML = '';
   [...saved].reverse().forEach(art => {
-    const item  = document.createElement('div');
+    const item = document.createElement('div');
     item.className = 'saved-card';
-    const emoji = guessEmoji(art);
+    const emoji    = guessEmoji(art);
     const thumbHtml = art.thumbnail?.source
       ? `<img class="saved-thumb" src="${esc(art.thumbnail.source)}" alt="">`
       : `<div class="saved-thumb">${emoji}</div>`;
-    item.innerHTML = `${thumbHtml}<div class="saved-info"><div class="saved-title">${esc(art.title)}</div><div class="saved-desc">${esc(art.description || '')}</div></div><button class="saved-del">×</button>`;
+    item.innerHTML = `${thumbHtml}
+      <div class="saved-info">
+        <div class="saved-title">${esc(art.title)}</div>
+        <div class="saved-desc">${esc(art.description || '')}</div>
+      </div>
+      <button class="saved-del">×</button>`;
     item.querySelector('.saved-del').onclick = e => {
       e.stopPropagation();
       saved = saved.filter(s => s.title !== art.title);
@@ -849,16 +851,15 @@ function renderSaved() {
     };
     item.onclick = async () => {
       const pages = await fetchBatch([art.title]);
-      if (pages[0]) openArticle(pages[0]);
-      else { modalArt = art; openArticle(art); }
+      openArticle(pages[0] || art);
     };
     list.appendChild(item);
   });
 }
 
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  EXPORT
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 function exportMarkdown() {
   if (!saved.length) { showToast('Noch nichts gespeichert'); return; }
   const lines = ['# Mein Commonplace Buch', '', `*${saved.length} Artikel · WikiSwipe*`, ''];
@@ -875,9 +876,9 @@ function exportMarkdown() {
   showToast('Markdown exportiert ✓');
 }
 
-// ═══════════════════════════════════════════════
-//  VIEW / UI
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  UI HELPERS
+// ══════════════════════════════════════════════
 function switchView(v) {
   document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
@@ -888,7 +889,7 @@ function switchView(v) {
 
 function updateBadge() {
   document.getElementById('badgeWrap').innerHTML =
-    saved.length ? `<span class="badge">${saved.length}</span> ` : '';
+    saved.length ? `<span class="nbadge">${saved.length}</span> ` : '';
 }
 
 function showLoading(on) {
@@ -897,9 +898,13 @@ function showLoading(on) {
 
 function showEmpty() {
   const wrap = document.getElementById('stackWrap');
-  const el = document.createElement('div');
+  const el   = document.createElement('div');
   el.className = 'center-state';
-  el.innerHTML = `<div class="big">🔄</div><h3>Alle gesehen!</h3><p>Du hast alle Artikel durchgeblättert. Lade neue oder schau in dein Commonplace.</p><button class="pill-btn" onclick="loadArticles()">Neue laden</button>`;
+  el.innerHTML = `
+    <div class="big">🔄</div>
+    <h3>Alle gesehen!</h3>
+    <p>Lade neue zufällige Artikel oder lies in deinem Commonplace weiter.</p>
+    <button class="pill-btn" onclick="loadArticles()">Neue laden</button>`;
   wrap.appendChild(el);
 }
 
@@ -915,30 +920,30 @@ function esc(s) {
 
 function guessEmoji(art) {
   const t = ((art.title||'') + ' ' + (art.description||'')).toLowerCase();
-  if (/physics|chemistry|biology|mathematics|quantum/.test(t)) return '🔬';
-  if (/history|war|battle|empire|century|ancient/.test(t))    return '📜';
-  if (/music|composer|band|album|symphony|opera/.test(t))     return '🎵';
-  if (/painting|art|artist|sculptor|museum/.test(t))          return '🎨';
-  if (/film|movie|actor|cinema|director/.test(t))             return '🎬';
-  if (/sport|football|soccer|olympic|athlete/.test(t))        return '⚽';
-  if (/country|city|capital|geography|mountain/.test(t))      return '🌍';
-  if (/philosoph|ethics|logic/.test(t))                       return '🤔';
-  if (/computer|software|programming|algorithm/.test(t))      return '💻';
-  if (/space|planet|star|astronomy|galaxy/.test(t))           return '🌌';
-  if (/animal|mammal|bird|species/.test(t))                   return '🦁';
-  if (/plant|flower|tree|botany/.test(t))                     return '🌿';
-  if (/food|cuisine|cooking|dish/.test(t))                    return '🍽️';
-  if (/novel|book|author|literature|poetry/.test(t))          return '📖';
-  if (/architecture|building|bridge/.test(t))                 return '🏛️';
-  if (/economy|economics|finance|market/.test(t))             return '📈';
-  if (/medicine|disease|health|anatomy/.test(t))              return '⚕️';
-  if (/law|court|justice|constitution/.test(t))               return '⚖️';
+  if (/physics|chemistry|biology|math|quantum/.test(t))  return '🔬';
+  if (/history|war|battle|empire|century|ancient/.test(t)) return '📜';
+  if (/music|composer|band|album|opera/.test(t))         return '🎵';
+  if (/painting|art|artist|sculptor|museum/.test(t))     return '🎨';
+  if (/film|movie|actor|cinema|director/.test(t))        return '🎬';
+  if (/sport|football|soccer|olympic|athlete/.test(t))   return '⚽';
+  if (/country|city|capital|geography|mountain/.test(t)) return '🌍';
+  if (/philosoph|ethics|logic/.test(t))                  return '🤔';
+  if (/computer|software|programming|algorithm/.test(t)) return '💻';
+  if (/space|planet|star|astronomy|galaxy/.test(t))      return '🌌';
+  if (/animal|mammal|bird|species/.test(t))              return '🦁';
+  if (/plant|flower|tree|botany/.test(t))                return '🌿';
+  if (/food|cuisine|cooking|dish/.test(t))               return '🍽️';
+  if (/novel|book|author|literature|poetry/.test(t))     return '📖';
+  if (/architecture|building|bridge/.test(t))            return '🏛️';
+  if (/economy|economics|finance/.test(t))               return '📈';
+  if (/medicine|disease|health|anatomy/.test(t))         return '⚕️';
+  if (/law|court|justice|constitution/.test(t))          return '⚖️';
   return '📄';
 }
 
-// ═══════════════════════════════════════════════
-//  LANGUAGE PICKER
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  LANGUAGE + BOOT
+// ══════════════════════════════════════════════
 document.getElementById('langPicker').value = lang;
 document.getElementById('langPicker').addEventListener('change', e => {
   lang = e.target.value;
@@ -946,9 +951,6 @@ document.getElementById('langPicker').addEventListener('change', e => {
   loadArticles(true);
 });
 
-// ═══════════════════════════════════════════════
-//  BOOT
-// ═══════════════════════════════════════════════
 updateBadge();
 loadArticles();
 </script>
