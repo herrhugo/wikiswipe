@@ -5,9 +5,8 @@
   GitHub Pages Deployment:
   1. Erstelle ein neues Repository auf github.com
   2. Lade diese Datei als index.html hoch
-  3. Gehe zu Settings → Pages → Source: "Deploy from branch" → main / root
-  4. Nach ~1 Minute ist die Seite unter https://[dein-nutzername].github.io/[repo-name]/ erreichbar
-  =====================================
+  3. Settings → Pages → Source: "Deploy from branch" → main / root
+  4. Nach ~1 Minute erreichbar unter https://[nutzername].github.io/[repo]/
 -->
 <html lang="de">
 <head>
@@ -18,442 +17,319 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #0c0c0e;
-      --surface:  #18181c;
-      --surface2: #222228;
-      --border:   rgba(255,255,255,0.07);
-      --text:     #f0f0f2;
-      --muted:    #6b6b78;
-      --accent:   #7c6af7;
-      --save:     #34d07a;
-      --skip:     #f25f5c;
-      --radius:   20px;
+      --bg:      #0c0c0e;
+      --surface: #18181c;
+      --sur2:    #222228;
+      --border:  rgba(255,255,255,0.07);
+      --text:    #f0f0f2;
+      --muted:   #66667a;
+      --accent:  #7c6af7;
+      --save:    #34d07a;
+      --skip:    #f25f5c;
     }
 
-    html, body {
-      height: 100%;
-      background: var(--bg);
-      color: var(--text);
+    html, body { height: 100%; background: var(--bg); color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      overflow: hidden;
-    }
-
+      overflow: hidden; }
     body { display: flex; flex-direction: column; }
 
     /* ── Header ── */
     .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px 12px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0;
     }
-    .logo { font-size: 19px; font-weight: 800; letter-spacing: -0.6px; }
+    .logo { font-size: 18px; font-weight: 800; letter-spacing: -.5px; }
     .logo em { color: var(--accent); font-style: normal; }
     .header-right { display: flex; gap: 8px; align-items: center; }
-    .icon-btn {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      width: 34px; height: 34px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 15px;
-      display: flex; align-items: center; justify-content: center;
-      transition: color .2s, background .2s;
+    .lang-select {
+      background: var(--sur2); border: 1px solid var(--border);
+      color: var(--text); padding: 4px 8px; border-radius: 8px; font-size: 12px; cursor: pointer;
     }
-    .icon-btn:hover { color: var(--text); background: var(--surface); }
+    .icon-btn {
+      background: var(--sur2); border: 1px solid var(--border); color: var(--muted);
+      width: 32px; height: 32px; border-radius: 9px; cursor: pointer; font-size: 14px;
+      display: flex; align-items: center; justify-content: center; transition: color .2s;
+    }
+    .icon-btn:hover { color: var(--text); }
 
-    /* ── Views ── */
+    /* ── Main / Views ── */
     .main { flex: 1; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
     .view { display: none; flex-direction: column; flex: 1; overflow: hidden; min-height: 0; }
     .view.active { display: flex; }
 
     /* ── Card Stack ── */
     .stack-wrap {
-      flex: 1;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px 20px 8px;
-      min-height: 0;
+      flex: 1; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      padding: 14px 18px 6px; min-height: 0;
     }
 
     .card {
       position: absolute;
-      width: min(360px, calc(100vw - 40px));
-      height: min(500px, calc(100svh - 200px));
-      border-radius: var(--radius);
+      width: min(370px, calc(100vw - 36px));
+      height: min(560px, calc(100svh - 180px));
+      border-radius: 18px;
       overflow: hidden;
-      cursor: grab;
-      user-select: none;
-      -webkit-user-select: none;
-      box-shadow: 0 24px 64px rgba(0,0,0,.6);
-      transform-origin: center 80%;
+      box-shadow: 0 20px 56px rgba(0,0,0,.6);
+      transform-origin: center 85%;
       will-change: transform;
+      background: var(--surface);
+      display: flex; flex-direction: column;
     }
-    .card:active { cursor: grabbing; }
-    .card.animating { transition: transform .15s cubic-bezier(.25,.46,.45,.94); }
+
+    /* swipe-out animations */
     .card.fly-right {
-      transition: transform .45s cubic-bezier(.25,.46,.45,.94), opacity .45s !important;
-      transform: translateX(160%) rotate(28deg) !important;
-      opacity: 0 !important;
+      transition: transform .42s cubic-bezier(.25,.46,.45,.94), opacity .42s !important;
+      transform: translateX(160%) rotate(26deg) !important; opacity: 0 !important;
     }
     .card.fly-left {
-      transition: transform .45s cubic-bezier(.25,.46,.45,.94), opacity .45s !important;
-      transform: translateX(-160%) rotate(-28deg) !important;
-      opacity: 0 !important;
+      transition: transform .42s cubic-bezier(.25,.46,.45,.94), opacity .42s !important;
+      transform: translateX(-160%) rotate(-26deg) !important; opacity: 0 !important;
     }
 
+    /* Card image */
     .card-img {
-      width: 100%; height: 54%;
-      object-fit: cover;
-      display: block;
-      background: var(--surface2);
-      pointer-events: none;
+      width: 100%; height: 160px; object-fit: cover;
+      display: block; flex-shrink: 0; background: var(--sur2);
+      pointer-events: none; -webkit-user-drag: none;
     }
     .card-img-placeholder {
-      width: 100%; height: 54%;
-      background: linear-gradient(140deg, var(--surface2) 0%, var(--surface) 100%);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 64px;
-    }
-    .card-body {
-      background: var(--surface);
-      padding: 18px 18px 14px;
-      height: 46%;
-      display: flex; flex-direction: column;
-      gap: 6px;
-    }
-    .card-type {
-      font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 1.2px;
-      color: var(--accent);
-    }
-    .card-title { font-size: 18px; font-weight: 700; line-height: 1.25; }
-    .card-desc {
-      font-size: 12.5px; color: var(--muted); line-height: 1.55;
-      flex: 1; overflow: hidden;
-      display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;
-    }
-    .card-hint {
-      font-size: 11px; color: var(--accent); font-weight: 600;
-      margin-top: 4px;
+      width: 100%; height: 120px; flex-shrink: 0;
+      background: linear-gradient(140deg, var(--sur2), var(--surface));
+      display: flex; align-items: center; justify-content: center; font-size: 52px;
     }
 
-    /* swipe overlays */
-    .swipe-badge {
-      position: absolute; top: 18px;
-      padding: 6px 14px; border-radius: 8px;
-      font-size: 16px; font-weight: 800;
-      border: 2.5px solid; opacity: 0;
-      pointer-events: none; transition: opacity .08s;
-      z-index: 5;
+    /* Scrollable text area */
+    .card-scroll {
+      flex: 1; overflow-y: auto; padding: 14px 16px 40px;
+      -webkit-overflow-scrolling: touch;
     }
-    .badge-save { left: 18px; color: var(--save); border-color: var(--save); }
-    .badge-skip { right: 18px; color: var(--skip); border-color: var(--skip); }
+    .card-scroll::-webkit-scrollbar { width: 3px; }
+    .card-scroll::-webkit-scrollbar-thumb { background: var(--sur2); border-radius: 2px; }
+
+    .card-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.1px; color: var(--accent); margin-bottom: 6px;
+    }
+    .card-title { font-size: 17px; font-weight: 800; line-height: 1.25; margin-bottom: 4px; }
+    .card-desc  { font-size: 11.5px; color: var(--muted); margin-bottom: 10px; }
+    .card-extract {
+      font-size: 13.5px; line-height: 1.68; color: #ccc;
+    }
+
+    /* Fade + hint at bottom of card */
+    .card-fade {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 52px;
+      background: linear-gradient(transparent, var(--surface));
+      pointer-events: none; border-radius: 0 0 18px 18px;
+    }
+    .card-hint {
+      position: absolute; bottom: 10px; left: 0; right: 0;
+      text-align: center; font-size: 10.5px; color: var(--muted);
+      font-weight: 600; letter-spacing: .4px; pointer-events: none;
+    }
+
+    /* Swipe badges */
+    .swipe-badge {
+      position: absolute; top: 16px;
+      padding: 5px 12px; border-radius: 8px;
+      font-size: 14px; font-weight: 800; border: 2.5px solid;
+      opacity: 0; pointer-events: none; z-index: 5;
+    }
+    .badge-save { left: 16px; color: var(--save); border-color: var(--save); }
+    .badge-skip { right: 16px; color: var(--skip); border-color: var(--skip); }
 
     /* ── Action buttons ── */
     .actions {
       display: flex; justify-content: center; align-items: center;
-      gap: 20px; padding: 12px 20px 16px;
-      flex-shrink: 0;
+      gap: 18px; padding: 10px 18px 14px; flex-shrink: 0;
     }
     .act-btn {
       border: none; cursor: pointer; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      transition: transform .15s, box-shadow .15s;
-      font-size: 20px;
+      transition: transform .15s; font-size: 20px;
     }
     .act-btn:hover  { transform: scale(1.08); }
-    .act-btn:active { transform: scale(.93); }
-    .btn-skip {
-      width: 52px; height: 52px;
-      background: rgba(242,95,92,.12);
-      color: var(--skip);
-      box-shadow: 0 0 0 2px rgba(242,95,92,.25);
-    }
-    .btn-read {
-      width: 52px; height: 52px;
-      background: rgba(124,106,247,.12);
-      color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(124,106,247,.25);
-      font-size: 18px;
-    }
-    .btn-save {
-      width: 64px; height: 64px; font-size: 26px;
-      background: rgba(52,208,122,.12);
-      color: var(--save);
-      box-shadow: 0 0 0 2px rgba(52,208,122,.25);
-    }
+    .act-btn:active { transform: scale(.92); }
+    .btn-skip { width: 50px; height: 50px; background: rgba(242,95,92,.12); color: var(--skip); box-shadow: 0 0 0 2px rgba(242,95,92,.25); }
+    .btn-read { width: 50px; height: 50px; background: rgba(124,106,247,.12); color: var(--accent); box-shadow: 0 0 0 2px rgba(124,106,247,.25); font-size: 17px; }
+    .btn-save { width: 62px; height: 62px; background: rgba(52,208,122,.12); color: var(--save); box-shadow: 0 0 0 2px rgba(52,208,122,.25); font-size: 25px; }
 
-    /* ── Empty / Loading ── */
+    /* ── Loading / Empty ── */
     .center-state {
       position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 14px; color: var(--muted);
-      text-align: center; padding: 24px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px; color: var(--muted); text-align: center; padding: 24px;
     }
-    .center-state .big { font-size: 52px; }
+    .center-state .big { font-size: 50px; }
     .center-state h3 { font-size: 18px; font-weight: 700; color: var(--text); }
-    .center-state p  { font-size: 13px; line-height: 1.6; max-width: 280px; }
-    .pill-btn {
-      padding: 11px 22px;
-      background: var(--accent); color: #fff;
-      border: none; border-radius: 12px;
-      font-size: 14px; font-weight: 700;
-      cursor: pointer; margin-top: 4px;
-      transition: opacity .2s;
-    }
-    .pill-btn:hover { opacity: .85; }
+    .center-state p  { font-size: 13px; line-height: 1.6; max-width: 270px; }
     .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid var(--surface2);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
+      width: 34px; height: 34px;
+      border: 3px solid var(--sur2); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin .7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .pill-btn {
+      padding: 10px 22px; background: var(--accent); color: #fff;
+      border: none; border-radius: 12px; font-size: 14px; font-weight: 700;
+      cursor: pointer; margin-top: 4px;
+    }
+    .pill-btn:hover { opacity: .85; }
 
     /* ── Bottom Nav ── */
-    .bottom-nav {
-      display: flex;
-      border-top: 1px solid var(--border);
-      flex-shrink: 0;
-      background: var(--bg);
-    }
+    .bottom-nav { display: flex; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--bg); }
     .nav-tab {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 3px; padding: 10px 0 12px;
-      background: none; border: none;
-      color: var(--muted); cursor: pointer;
-      font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .6px;
-      transition: color .2s;
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 3px; padding: 9px 0 11px; background: none; border: none;
+      color: var(--muted); cursor: pointer; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .5px; transition: color .2s;
     }
-    .nav-tab .ni { font-size: 21px; }
+    .nav-tab .ni { font-size: 20px; }
     .nav-tab.active { color: var(--accent); }
     .badge {
-      display: inline-block;
-      background: var(--accent); color: #fff;
-      font-size: 9px; font-weight: 800;
-      padding: 1px 5px; border-radius: 10px;
-      min-width: 16px; text-align: center;
-      line-height: 14px;
+      display: inline-block; background: var(--accent); color: #fff;
+      font-size: 9px; font-weight: 800; padding: 1px 5px;
+      border-radius: 10px; min-width: 16px; text-align: center; line-height: 14px;
     }
 
     /* ── Saved View ── */
-    .view-header {
-      padding: 18px 20px 14px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .view-header h2 { font-size: 20px; font-weight: 800; }
-    .view-header p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .view-header { padding: 16px 18px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .view-header-row { display: flex; justify-content: space-between; align-items: center; }
-
-    .saved-list {
-      flex: 1; overflow-y: auto;
-      padding: 12px;
-      display: flex; flex-direction: column; gap: 8px;
+    .view-header h2 { font-size: 19px; font-weight: 800; }
+    .view-header p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .sm-btn {
+      padding: 6px 14px; background: var(--sur2); border: 1px solid var(--border);
+      color: var(--muted); border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer;
     }
-
+    .sm-btn:hover { color: var(--text); }
+    .saved-list { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
     .saved-card {
-      display: flex; gap: 12px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px; padding: 12px;
-      cursor: pointer;
-      transition: background .15s;
+      display: flex; gap: 12px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px; cursor: pointer; transition: background .15s;
     }
-    .saved-card:hover { background: var(--surface2); }
+    .saved-card:hover { background: var(--sur2); }
     .saved-thumb {
-      width: 58px; height: 58px;
-      border-radius: 10px;
-      object-fit: cover;
-      flex-shrink: 0;
-      background: var(--surface2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px;
+      width: 56px; height: 56px; border-radius: 9px; object-fit: cover;
+      flex-shrink: 0; background: var(--sur2);
+      display: flex; align-items: center; justify-content: center; font-size: 24px;
     }
     .saved-info { flex: 1; min-width: 0; }
-    .saved-title {
-      font-size: 14px; font-weight: 700;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .saved-desc {
-      font-size: 11.5px; color: var(--muted); margin-top: 2px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .saved-note-preview {
-      font-size: 11px; color: var(--accent); margin-top: 4px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .saved-del {
-      background: none; border: none;
-      color: var(--muted); font-size: 18px;
-      cursor: pointer; align-self: flex-start;
-      padding: 2px 4px; border-radius: 6px;
-      transition: color .15s;
-    }
+    .saved-title { font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .saved-desc  { font-size: 11.5px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .saved-del { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; align-self: flex-start; padding: 2px 4px; }
     .saved-del:hover { color: var(--skip); }
-
-    .saved-empty {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 12px; color: var(--muted); text-align: center; padding: 40px;
-    }
-    .saved-empty .big { font-size: 50px; }
-    .saved-empty h3 { font-size: 17px; font-weight: 700; color: var(--text); }
-    .saved-empty p  { font-size: 13px; line-height: 1.6; max-width: 260px; }
+    .saved-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--muted); text-align: center; padding: 40px; }
+    .saved-empty .big { font-size: 48px; }
+    .saved-empty h3 { font-size: 16px; font-weight: 700; color: var(--text); }
+    .saved-empty p  { font-size: 13px; line-height: 1.6; max-width: 250px; }
 
     /* ── Article Modal ── */
     .modal {
-      position: fixed; inset: 0; z-index: 50;
-      background: var(--bg);
+      position: fixed; inset: 0; z-index: 50; background: var(--bg);
       display: flex; flex-direction: column;
       transform: translateY(100%);
-      transition: transform .35s cubic-bezier(.32,.72,0,1);
+      transition: transform .32s cubic-bezier(.32,.72,0,1);
     }
     .modal.open { transform: translateY(0); }
 
     .modal-header {
       display: flex; align-items: center; gap: 10px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
+      padding: 12px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
     }
     .modal-back {
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text); width: 34px; height: 34px;
-      border-radius: 10px; cursor: pointer; font-size: 16px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+      background: var(--sur2); border: 1px solid var(--border); color: var(--text);
+      width: 32px; height: 32px; border-radius: 9px; cursor: pointer; font-size: 15px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .modal-ttl {
-      flex: 1; font-size: 15px; font-weight: 700;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
+    .modal-ttl { flex: 1; font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .modal-save-btn {
-      padding: 6px 14px;
-      border-radius: 20px; font-size: 12px; font-weight: 700;
-      cursor: pointer; border: 2px solid var(--save);
-      background: none; color: var(--save);
-      white-space: nowrap; transition: background .2s, color .2s;
-      flex-shrink: 0;
+      padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      cursor: pointer; border: 2px solid var(--save); background: none; color: var(--save);
+      white-space: nowrap; transition: background .2s, color .2s; flex-shrink: 0;
     }
     .modal-save-btn.is-saved { background: var(--save); color: #0c0c0e; }
 
     .modal-body { flex: 1; overflow-y: auto; }
-    .modal-hero-img { width: 100%; max-height: 220px; object-fit: cover; display: block; }
-    .modal-content { padding: 20px 18px 32px; }
-    .modal-content h1 { font-size: 22px; font-weight: 800; line-height: 1.2; margin-bottom: 6px; }
-    .modal-content .desc-tag { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
-    .modal-content .extract {
-      font-size: 15px; line-height: 1.72; color: #ccc;
-      margin-bottom: 24px;
-    }
+    .modal-hero { width: 100%; max-height: 230px; object-fit: cover; display: block; }
 
-    .section-label {
-      font-size: 10.5px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 1.2px;
-      color: var(--muted); margin-bottom: 10px;
-    }
+    .modal-content { padding: 18px 18px 40px; }
+    .modal-content h1 { font-size: 22px; font-weight: 800; line-height: 1.2; margin-bottom: 4px; }
+    .modal-desc-tag   { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
 
-    .related-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 8px; margin-bottom: 24px;
+    /* Full extract rendered as readable paragraphs */
+    .modal-extract {
+      font-size: 15px; line-height: 1.75; color: #d4d4e0; margin-bottom: 28px;
     }
+    .modal-extract p { margin-bottom: 1em; }
+    .modal-extract p:last-child { margin-bottom: 0; }
+
+    /* Additional sections */
+    .section-block { margin-bottom: 24px; }
+    .section-block h2 {
+      font-size: 14px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .9px; color: var(--muted); margin-bottom: 10px;
+      padding-bottom: 6px; border-bottom: 1px solid var(--border);
+    }
+    .section-body { font-size: 14px; line-height: 1.72; color: #bbb; }
+    .section-body p { margin-bottom: .9em; }
+    .section-body p:last-child { margin-bottom: 0; }
+
+    .sec-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.1px; color: var(--muted); margin-bottom: 10px;
+    }
+    .related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
     .rel-pill {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 10px 12px;
-      font-size: 12.5px; font-weight: 600; cursor: pointer;
-      transition: background .15s; line-height: 1.3;
+      border-radius: 10px; padding: 9px 11px; font-size: 12.5px; font-weight: 600;
+      cursor: pointer; transition: background .15s; line-height: 1.3;
     }
-    .rel-pill:hover { background: var(--surface2); color: var(--accent); }
+    .rel-pill:hover { background: var(--sur2); color: var(--accent); }
 
-    .wiki-open-link {
+    .wiki-link {
       display: flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 13px; background: var(--surface);
-      border: 1px solid var(--border); border-radius: 12px;
-      color: var(--accent); text-decoration: none; font-weight: 700; font-size: 13.5px;
-      margin-bottom: 24px; transition: background .15s;
+      padding: 13px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; color: var(--accent); text-decoration: none;
+      font-weight: 700; font-size: 13.5px; transition: background .15s;
     }
-    .wiki-open-link:hover { background: var(--surface2); }
-
-    .note-area { width: 100%; min-height: 96px; resize: vertical; }
-    textarea.note-area {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px 14px;
-      color: var(--text); font-size: 14px; font-family: inherit;
-      line-height: 1.6; resize: vertical;
-    }
-    textarea.note-area:focus { outline: none; border-color: var(--accent); }
-    .note-save {
-      margin-top: 8px; padding: 9px 18px;
-      background: var(--accent); color: #fff;
-      border: none; border-radius: 10px;
-      font-size: 13px; font-weight: 700; cursor: pointer;
-      transition: opacity .2s;
-    }
-    .note-save:hover { opacity: .85; }
-
-    /* ── Lang Picker ── */
-    .lang-select {
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text); padding: 4px 8px; border-radius: 8px;
-      font-size: 12px; cursor: pointer;
-    }
+    .wiki-link:hover { background: var(--sur2); }
 
     /* ── Toast ── */
     .toast {
-      position: fixed; bottom: 80px; left: 50%;
-      transform: translateX(-50%) translateY(16px);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text); padding: 9px 18px;
-      border-radius: 20px; font-size: 13px; font-weight: 600;
-      opacity: 0; pointer-events: none; z-index: 200;
-      transition: opacity .25s, transform .25s;
-      white-space: nowrap;
+      position: fixed; bottom: 76px; left: 50%;
+      transform: translateX(-50%) translateY(14px);
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); padding: 8px 18px; border-radius: 20px;
+      font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none;
+      z-index: 200; transition: opacity .25s, transform .25s; white-space: nowrap;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar { width: 3px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
-
-    @media (min-width: 480px) {
-      .card { height: min(520px, calc(100svh - 200px)); }
-    }
+    ::-webkit-scrollbar-thumb { background: var(--sur2); border-radius: 2px; }
   </style>
 </head>
 <body>
 
-<!-- Header -->
 <header class="header">
   <div class="logo">Wiki<em>Swipe</em></div>
   <div class="header-right">
-    <select class="lang-select" id="langPicker" title="Wikipedia-Sprache">
+    <select class="lang-select" id="langPicker">
       <option value="en">🌐 EN</option>
       <option value="de">🇩🇪 DE</option>
       <option value="fr">🇫🇷 FR</option>
       <option value="es">🇪🇸 ES</option>
       <option value="ja">🇯🇵 JA</option>
     </select>
-    <button class="icon-btn" onclick="exportMarkdown()" title="Commonplace als Markdown exportieren">⬇</button>
+    <button class="icon-btn" onclick="exportMarkdown()" title="Als Markdown exportieren">⬇</button>
   </div>
 </header>
 
-<!-- Main -->
 <main class="main">
 
-  <!-- ── Discover View ── -->
+  <!-- Discover -->
   <div class="view active" id="view-discover">
     <div class="stack-wrap" id="stackWrap">
       <div class="center-state" id="loadingState">
@@ -462,18 +338,18 @@
       </div>
     </div>
     <div class="actions">
-      <button class="act-btn btn-skip" onclick="doSkip()" title="Überspringen (←)">✕</button>
-      <button class="act-btn btn-read"  onclick="doRead()"  title="Artikel lesen (↑)">📖</button>
-      <button class="act-btn btn-save"  onclick="doSave()"  title="Speichern (→)">♥</button>
+      <button class="act-btn btn-skip" onclick="doSkip()" title="Überspringen">✕</button>
+      <button class="act-btn btn-read"  onclick="doRead()"  title="Vollständig lesen">📖</button>
+      <button class="act-btn btn-save"  onclick="doSave()"  title="Speichern">♥</button>
     </div>
   </div>
 
-  <!-- ── Saved View ── -->
+  <!-- Saved -->
   <div class="view" id="view-saved">
     <div class="view-header">
       <div class="view-header-row">
         <h2>📚 Commonplace</h2>
-        <button class="pill-btn" style="padding:7px 14px;font-size:12px;" onclick="exportMarkdown()">Export ↓</button>
+        <button class="sm-btn" onclick="exportMarkdown()">Export ↓</button>
       </div>
       <p id="savedCount">0 Artikel gespeichert</p>
     </div>
@@ -482,16 +358,13 @@
 
 </main>
 
-<!-- Bottom Nav -->
 <nav class="bottom-nav">
   <button class="nav-tab active" id="tab-discover" onclick="switchView('discover')">
-    <span class="ni">🔍</span>
-    Entdecken
+    <span class="ni">🔍</span>Entdecken
   </button>
   <button class="nav-tab" id="tab-saved" onclick="switchView('saved')">
     <span class="ni">📚</span>
-    <span id="savedBadgeWrap"></span>
-    Gespeichert
+    <span id="badgeWrap"></span>Gespeichert
   </button>
 </nav>
 
@@ -500,72 +373,89 @@
   <div class="modal-header">
     <button class="modal-back" onclick="closeModal()">←</button>
     <div class="modal-ttl" id="modalTitle"></div>
-    <button class="modal-save-btn" id="modalSaveBtn" onclick="toggleSaveFromModal()">Speichern</button>
+    <button class="modal-save-btn" id="modalSaveBtn" onclick="toggleModalSave()">Speichern</button>
   </div>
   <div class="modal-body">
-    <img class="modal-hero-img" id="modalImg" src="" alt="" style="display:none">
+    <img class="modal-hero" id="modalImg" src="" alt="" style="display:none">
     <div class="modal-content">
       <h1 id="modalH1"></h1>
-      <div class="desc-tag" id="modalDescTag"></div>
-      <div class="extract" id="modalExtract"></div>
+      <div class="modal-desc-tag" id="modalDesc"></div>
 
-      <div class="section-label">Verwandte Themen</div>
+      <div class="modal-extract" id="modalExtract"></div>
+
+      <div id="modalSections"></div>
+
+      <div class="sec-label">Verwandte Themen</div>
       <div class="related-grid" id="relatedGrid">
         <div style="color:var(--muted);font-size:13px;grid-column:span 2">Lädt…</div>
       </div>
 
-      <a class="wiki-open-link" id="modalWikiLink" href="#" target="_blank" rel="noopener">
+      <a class="wiki-link" id="modalWikiLink" href="#" target="_blank" rel="noopener">
         📄 Vollständig auf Wikipedia lesen ↗
       </a>
-
-      <div class="section-label">Meine Notiz</div>
-      <textarea class="note-area" id="noteInput" rows="4" placeholder="Was nimmst du aus diesem Artikel mit?"></textarea>
-      <button class="note-save" onclick="saveNote()">Notiz speichern</button>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  STATE
-// ══════════════════════════════════════════════
-let lang       = localStorage.getItem('wikiswipe_lang') || 'en';
+// ═══════════════════════════════════════════════
+let lang       = localStorage.getItem('ws_lang') || 'en';
 let articles   = [];
-let queue      = []; // pre-fetched summaries
 let currentIdx = 0;
-let saved      = JSON.parse(localStorage.getItem('wikiswipe_saved') || '[]');
+let saved      = JSON.parse(localStorage.getItem('ws_saved') || '[]');
 let modalArt   = null;
-let loading    = false;
+let isLoading  = false;
 
 // drag state
-let dragStartX = 0, dragStartY = 0;
-let isDragging = false, didMove = false;
-let activeCard = null;
+let dragStartX   = 0, dragStartY = 0;
+let isDragging   = false;
+let swipeDir     = null; // null | 'h' | 'v'
+let didCommit    = false;
+let activeCard   = null;
 
-// ══════════════════════════════════════════════
-//  API
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  API — batch fetch with FULL intro extract
+// ═══════════════════════════════════════════════
 function apiBase()  { return `https://${lang}.wikipedia.org/w/api.php`; }
 function restBase() { return `https://${lang}.wikipedia.org/api/rest_v1`; }
 
-async function fetchRandomTitles(n = 20) {
+async function fetchRandomTitles(n = 18) {
   const url = `${apiBase()}?action=query&list=random&rnlimit=${n}&rnnamespace=0&format=json&origin=*`;
   const d = await fetch(url).then(r => r.json());
   return d.query.random.map(p => p.title);
 }
 
-async function fetchSummary(title) {
+// Batch call: get full intro extract + images for multiple titles at once
+async function fetchBatch(titles) {
+  const joined = titles.map(t => encodeURIComponent(t)).join('|');
+  const url = `${apiBase()}?action=query`
+    + `&titles=${joined}`
+    + `&prop=extracts|pageimages|description|info`
+    + `&exintro=true&explaintext=true`
+    + `&piprop=thumbnail|original&pithumbsize=640`
+    + `&inprop=url`
+    + `&redirects=1&format=json&origin=*`;
+  const d = await fetch(url).then(r => r.json());
+  const pages = d.query?.pages || {};
+  return Object.values(pages).filter(p =>
+    !p.missing && p.extract && p.extract.trim().length > 120
+  );
+}
+
+// Mobile-sections for the article reader (rich content)
+async function fetchSections(title) {
   try {
-    const r = await fetch(`${restBase()}/page/summary/${encodeURIComponent(title)}`);
-    if (!r.ok) return null;
-    return r.json();
+    const url = `${restBase()}/page/mobile-sections/${encodeURIComponent(title)}`;
+    const d = await fetch(url).then(r => r.json());
+    return d;
   } catch { return null; }
 }
 
-async function fetchRelatedTitles(title) {
+async function fetchRelated(title) {
   try {
     const url = `${apiBase()}?action=query&titles=${encodeURIComponent(title)}&prop=links&pllimit=14&plnamespace=0&format=json&origin=*`;
     const d = await fetch(url).then(r => r.json());
@@ -575,122 +465,100 @@ async function fetchRelatedTitles(title) {
   } catch { return []; }
 }
 
-// ══════════════════════════════════════════════
-//  LOAD ARTICLES
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  LOAD
+// ═══════════════════════════════════════════════
 async function loadArticles(reset = true) {
-  if (loading) return;
-  loading = true;
+  if (isLoading) return;
+  isLoading = true;
   showLoading(true);
-
-  if (reset) {
-    articles   = [];
-    queue      = [];
-    currentIdx = 0;
-    clearStack();
-  }
+  if (reset) { articles = []; currentIdx = 0; clearStack(); }
 
   try {
-    const titles = await fetchRandomTitles(20);
-    const results = await Promise.allSettled(titles.map(fetchSummary));
-    const good = results
-      .filter(r => r.status === 'fulfilled' && r.value)
-      .map(r => r.value)
-      .filter(a => a.extract && a.extract.length > 80 && a.type !== 'disambiguation');
-
-    articles = [...articles, ...good];
-    currentIdx = reset ? 0 : currentIdx;
+    const titles  = await fetchRandomTitles(18);
+    // Batch in two halves to stay under URL length limits
+    const half = Math.ceil(titles.length / 2);
+    const [a, b] = await Promise.all([
+      fetchBatch(titles.slice(0, half)),
+      fetchBatch(titles.slice(half))
+    ]);
+    const good = [...a, ...b].filter(p => p.extract.length > 150);
+    articles = reset ? good : [...articles, ...good];
   } catch(e) { console.error(e); }
 
-  loading = false;
+  isLoading = false;
   showLoading(false);
   renderStack();
 }
 
 async function loadMore() {
-  if (loading) return;
-  loading = true;
+  if (isLoading) return;
+  isLoading = true;
   try {
-    const titles = await fetchRandomTitles(15);
-    const results = await Promise.allSettled(titles.map(fetchSummary));
-    const good = results
-      .filter(r => r.status === 'fulfilled' && r.value)
-      .map(r => r.value)
-      .filter(a => a.extract && a.extract.length > 80 && a.type !== 'disambiguation');
-    articles = [...articles, ...good];
+    const titles = await fetchRandomTitles(14);
+    const half   = Math.ceil(titles.length / 2);
+    const [a, b] = await Promise.all([fetchBatch(titles.slice(0, half)), fetchBatch(titles.slice(half))]);
+    articles = [...articles, ...[...a, ...b].filter(p => p.extract.length > 150)];
   } catch(e) {}
-  loading = false;
+  isLoading = false;
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  RENDER STACK
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function clearStack() {
   document.querySelectorAll('.card').forEach(c => c.remove());
 }
 
 function renderStack() {
   clearStack();
-
   const wrap = document.getElementById('stackWrap');
-  const remaining = articles.slice(currentIdx, currentIdx + 3);
+  const slice = articles.slice(currentIdx, currentIdx + 3);
+  if (!slice.length) { showEmpty(); return; }
 
-  if (remaining.length === 0) {
-    showEmpty();
-    return;
-  }
-
-  // Render back-to-front so top card is last child (renders on top)
-  [...remaining].reverse().forEach(art => {
-    const card = buildCard(art);
+  // Append back-to-front so top card is last child
+  [...slice].reverse().forEach((art, ri) => {
+    const card  = buildCard(art);
+    const depth = ri; // 0 = top (last appended), 2 = bottom
+    if (depth === 0) {
+      card.style.zIndex = '3';
+      // no transform — stays in place
+    } else if (depth === 1) {
+      card.style.zIndex = '2';
+      card.style.transform = 'scale(0.94) translateY(18px)';
+    } else {
+      card.style.zIndex = '1';
+      card.style.transform = 'scale(0.88) translateY(36px)';
+    }
     wrap.appendChild(card);
   });
 
-  // Attach drag to top card
-  const top = wrap.querySelector('.card:last-child');
-  if (top) attachDrag(top);
-
-  // Apply stacking offsets via CSS custom prop or inline style
-  const cards = [...wrap.querySelectorAll('.card')];
-  const n = cards.length;
-  cards.forEach((c, i) => {
-    // i=0 is bottom, i=n-1 is top
-    const depth = n - 1 - i; // 0 for top
-    if (depth === 0) {
-      c.style.transform = 'none';
-      c.style.zIndex    = 3;
-    } else if (depth === 1) {
-      c.style.transform = 'scale(0.94) translateY(18px)';
-      c.style.zIndex    = 2;
-    } else {
-      c.style.transform = 'scale(0.88) translateY(36px)';
-      c.style.zIndex    = 1;
-    }
-  });
-
-  // Pre-fetch more when running low
-  if (currentIdx + 4 >= articles.length) loadMore();
+  attachDrag(wrap.querySelector('.card:last-child'));
+  if (currentIdx + 5 >= articles.length) loadMore();
 }
 
 function buildCard(art) {
   const div = document.createElement('div');
   div.className = 'card';
-  div.dataset.title = art.title;
 
   const emoji = guessEmoji(art);
-
   const imgHtml = art.thumbnail?.source
     ? `<img class="card-img" src="${esc(art.thumbnail.source)}" alt="" draggable="false">`
     : `<div class="card-img-placeholder">${emoji}</div>`;
 
+  // Format extract into readable paragraphs on the card
+  const extract = art.extract || '';
+
   div.innerHTML = `
     ${imgHtml}
-    <div class="card-body">
-      <div class="card-type">Wikipedia · ${lang.toUpperCase()}</div>
+    <div class="card-scroll">
+      <div class="card-label">Wikipedia · ${lang.toUpperCase()}</div>
       <div class="card-title">${esc(art.title)}</div>
-      <div class="card-desc">${esc(art.description || art.extract?.slice(0,180) || '')}</div>
-      <div class="card-hint">Tippen zum Lesen · Swipe zum Entscheiden</div>
+      ${art.description ? `<div class="card-desc">${esc(art.description)}</div>` : ''}
+      <div class="card-extract">${esc(extract)}</div>
     </div>
+    <div class="card-fade"></div>
+    <div class="card-hint">← überspringen &nbsp;·&nbsp; 📖 lesen &nbsp;·&nbsp; speichern →</div>
     <div class="swipe-badge badge-save">SAVE ♥</div>
     <div class="swipe-badge badge-skip">SKIP ✕</div>
   `;
@@ -698,46 +566,59 @@ function buildCard(art) {
   return div;
 }
 
-// ══════════════════════════════════════════════
-//  DRAG & SWIPE
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  DRAG / SWIPE
+//  Direction-aware: vertical touch → scroll the card text
+//                   horizontal drag → swipe the card away
+// ═══════════════════════════════════════════════
 function attachDrag(card) {
-  card.addEventListener('mousedown',  startDrag);
-  card.addEventListener('touchstart', startDrag, { passive: true });
+  if (!card) return;
+  card.addEventListener('mousedown',  onStart);
+  card.addEventListener('touchstart', onStart, { passive: true });
 }
 
-function startDrag(e) {
-  activeCard   = e.currentTarget;
-  isDragging   = true;
-  didMove      = false;
-  dragStartX   = e.clientX ?? e.touches[0].clientX;
-  dragStartY   = e.clientY ?? e.touches[0].clientY;
+function onStart(e) {
+  activeCard  = e.currentTarget;
+  isDragging  = true;
+  didCommit   = false;
+  swipeDir    = null;
+  dragStartX  = e.clientX  ?? e.touches[0].clientX;
+  dragStartY  = e.clientY  ?? e.touches[0].clientY;
 
   document.addEventListener('mousemove',  onMove);
-  document.addEventListener('touchmove',  onMove, { passive: true });
+  document.addEventListener('touchmove',  onMove, { passive: false });
   document.addEventListener('mouseup',    onEnd);
   document.addEventListener('touchend',   onEnd);
 }
 
 function onMove(e) {
   if (!isDragging || !activeCard) return;
+
   const cx = e.clientX ?? e.touches[0].clientX;
   const cy = e.clientY ?? e.touches[0].clientY;
   const dx = cx - dragStartX;
   const dy = cy - dragStartY;
+  const adx = Math.abs(dx), ady = Math.abs(dy);
 
-  if (Math.abs(dx) > 4 || Math.abs(dy) > 4) didMove = true;
+  // Determine direction on first significant movement
+  if (!swipeDir) {
+    if (adx < 6 && ady < 6) return; // too small to decide yet
+    swipeDir = adx >= ady ? 'h' : 'v';
+  }
+
+  if (swipeDir === 'v') return; // let browser scroll the card text
+
+  // Horizontal swipe committed
+  e.preventDefault();
+  didCommit = true;
 
   const rot = dx / 16;
-  activeCard.style.transform   = `translateX(${dx}px) translateY(${dy * 0.25}px) rotate(${rot}deg)`;
-  activeCard.style.transition  = 'none';
+  activeCard.style.transition = 'none';
+  activeCard.style.transform  = `translateX(${dx}px) translateY(${dy * 0.2}px) rotate(${rot}deg)`;
 
-  const strength = Math.min(Math.abs(dx) / 90, 1);
-  const saveBadge = activeCard.querySelector('.badge-save');
-  const skipBadge = activeCard.querySelector('.badge-skip');
-  if (dx > 10)  { saveBadge.style.opacity = strength; skipBadge.style.opacity = 0; }
-  else if (dx < -10) { skipBadge.style.opacity = strength; saveBadge.style.opacity = 0; }
-  else { saveBadge.style.opacity = 0; skipBadge.style.opacity = 0; }
+  const strength = Math.min(adx / 85, 1);
+  activeCard.querySelector('.badge-save').style.opacity = dx >  12 ? strength : 0;
+  activeCard.querySelector('.badge-skip').style.opacity = dx < -12 ? strength : 0;
 }
 
 function onEnd(e) {
@@ -749,9 +630,10 @@ function onEnd(e) {
   document.removeEventListener('mouseup',    onEnd);
   document.removeEventListener('touchend',   onEnd);
 
-  if (!didMove) {
-    // Treat as tap → open article
-    activeCard.style.transform = 'none';
+  if (!didCommit) {
+    // Tap → open article
+    activeCard.style.transform = '';
+    const card = activeCard;
     activeCard = null;
     openArticle(articles[currentIdx]);
     return;
@@ -759,16 +641,14 @@ function onEnd(e) {
 
   const cx = e.clientX ?? e.changedTouches?.[0]?.clientX ?? dragStartX;
   const dx = cx - dragStartX;
-  const THRESHOLD = 90;
+  const THRESHOLD = 88;
 
-  if (dx > THRESHOLD) {
-    flyAway('right');
-  } else if (dx < -THRESHOLD) {
-    flyAway('left');
-  } else {
+  if (dx > THRESHOLD)       flyAway('right');
+  else if (dx < -THRESHOLD) flyAway('left');
+  else {
     // Snap back
-    activeCard.style.transition = 'transform .3s cubic-bezier(.25,.46,.45,.94)';
-    activeCard.style.transform  = 'none';
+    activeCard.style.transition = 'transform .28s cubic-bezier(.25,.46,.45,.94)';
+    activeCard.style.transform  = '';
     activeCard.querySelector('.badge-save').style.opacity = 0;
     activeCard.querySelector('.badge-skip').style.opacity = 0;
     activeCard = null;
@@ -777,43 +657,30 @@ function onEnd(e) {
 
 function flyAway(dir) {
   if (!activeCard) return;
-  const art = articles[currentIdx];
+  const art  = articles[currentIdx];
   const card = activeCard;
   activeCard = null;
 
   card.classList.add(dir === 'right' ? 'fly-right' : 'fly-left');
+  if (dir === 'right') { saveArticle(art); showToast('♥ Gespeichert!'); }
+  else                 { showToast('Weiter…'); }
 
-  if (dir === 'right') {
-    saveArticle(art);
-    toast('♥ Gespeichert!');
-  } else {
-    toast('Weiter…');
-  }
-
-  setTimeout(() => {
-    currentIdx++;
-    renderStack();
-  }, 390);
+  setTimeout(() => { currentIdx++; renderStack(); }, 380);
 }
 
-// ══════════════════════════════════════════════
-//  ACTION BUTTONS
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  BUTTON ACTIONS + KEYBOARD
+// ═══════════════════════════════════════════════
 function doSkip() {
-  if (!articles[currentIdx]) return;
   activeCard = document.querySelector('#stackWrap .card:last-child');
-  flyAway('left');
+  if (activeCard) { didCommit = true; flyAway('left'); }
 }
 function doSave() {
-  if (!articles[currentIdx]) return;
   activeCard = document.querySelector('#stackWrap .card:last-child');
-  flyAway('right');
+  if (activeCard) { didCommit = true; flyAway('right'); }
 }
-function doRead() {
-  if (articles[currentIdx]) openArticle(articles[currentIdx]);
-}
+function doRead() { if (articles[currentIdx]) openArticle(articles[currentIdx]); }
 
-// keyboard shortcuts
 document.addEventListener('keydown', e => {
   if (document.getElementById('articleModal').classList.contains('open')) {
     if (e.key === 'Escape') closeModal();
@@ -821,56 +688,106 @@ document.addEventListener('keydown', e => {
   }
   if (e.key === 'ArrowLeft'  || e.key === 'a') doSkip();
   if (e.key === 'ArrowRight' || e.key === 'd') doSave();
-  if (e.key === 'ArrowUp'    || e.key === 'w') doRead();
+  if (e.key === 'ArrowUp'    || e.key === 'w' || e.key === ' ') { e.preventDefault(); doRead(); }
 });
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  ARTICLE MODAL
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 async function openArticle(art) {
   modalArt = art;
 
-  document.getElementById('modalTitle').textContent  = art.title;
-  document.getElementById('modalH1').textContent     = art.title;
-  document.getElementById('modalDescTag').textContent = art.description || '';
-  document.getElementById('modalExtract').textContent = art.extract || '';
+  // Populate header & basics
+  document.getElementById('modalTitle').textContent = art.title;
+  document.getElementById('modalH1').textContent    = art.title;
+  document.getElementById('modalDesc').textContent  = art.description || '';
 
-  const wikiUrl = art.content_urls?.desktop?.page
-    || `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(art.title)}`;
-  document.getElementById('modalWikiLink').href = wikiUrl;
+  // Extract: split by double newline into paragraphs
+  const extract = (art.extract || '').trim();
+  const paras   = extract.split(/\n\n+/).filter(Boolean);
+  document.getElementById('modalExtract').innerHTML =
+    paras.map(p => `<p>${esc(p)}</p>`).join('');
 
+  // Image
   const img = document.getElementById('modalImg');
-  const src = art.originalimage?.source || art.thumbnail?.source;
-  if (src) { img.src = src; img.style.display = 'block'; }
-  else      { img.style.display = 'none'; }
+  const src = art.original?.source || art.thumbnail?.source;
+  if (src) { img.src = src; img.style.display = 'block'; } else { img.style.display = 'none'; }
 
+  // Wiki link
+  const wurl = art.fullurl || `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(art.title)}`;
+  document.getElementById('modalWikiLink').href = wurl;
+
+  // Save button state
   updateModalSaveBtn();
 
-  const savedEntry = saved.find(s => s.title === art.title);
-  document.getElementById('noteInput').value = savedEntry?.note || '';
+  // Clear sections + related
+  document.getElementById('modalSections').innerHTML = '';
+  document.getElementById('relatedGrid').innerHTML =
+    '<div style="color:var(--muted);font-size:13px;grid-column:span 2">Lädt…</div>';
 
-  // Open modal
+  // Scroll modal to top
+  document.querySelector('.modal-body').scrollTop = 0;
+
   document.getElementById('articleModal').classList.add('open');
 
-  // Load related async
-  const rg = document.getElementById('relatedGrid');
-  rg.innerHTML = '<div style="color:var(--muted);font-size:13px;grid-column:span 2">Lädt verwandte Themen…</div>';
+  // Load extra sections + related in parallel
+  const [sections, related] = await Promise.all([
+    fetchSections(art.title),
+    fetchRelated(art.title)
+  ]);
 
-  fetchRelatedTitles(art.title).then(titles => {
-    rg.innerHTML = '';
-    if (!titles.length) {
-      rg.innerHTML = '<div style="color:var(--muted);font-size:13px;grid-column:span 2">Keine gefunden.</div>';
-      return;
-    }
-    titles.slice(0,8).forEach(t => {
-      const pill = document.createElement('div');
-      pill.className = 'rel-pill';
-      pill.textContent = t;
-      pill.onclick = () => {
-        fetchSummary(t).then(s => { if (s) openArticle(s); });
-      };
-      rg.appendChild(pill);
+  renderSections(sections);
+  renderRelated(related, art.title);
+}
+
+function renderSections(data) {
+  const container = document.getElementById('modalSections');
+  if (!data?.remaining?.sections?.length) return;
+
+  // Show first 4 sections (skip very short ones)
+  const sections = data.remaining.sections
+    .filter(s => s.text && s.text.length > 80)
+    .slice(0, 4);
+
+  sections.forEach(sec => {
+    const div  = document.createElement('div');
+    div.className = 'section-block';
+
+    // Clean up Wikipedia HTML: strip inline styles, remove edit-section links, figures
+    const tmp = document.createElement('div');
+    tmp.innerHTML = sec.text;
+    tmp.querySelectorAll('.mw-editsection, figure, .thumb, sup, .reference').forEach(el => el.remove());
+    tmp.querySelectorAll('[style]').forEach(el => el.removeAttribute('style'));
+    tmp.querySelectorAll('[class]').forEach(el => el.removeAttribute('class'));
+    // Convert relative links to plain text (no navigation inside modal)
+    tmp.querySelectorAll('a').forEach(a => {
+      const span = document.createElement('span');
+      span.textContent = a.textContent;
+      a.replaceWith(span);
     });
+
+    div.innerHTML = `<h2>${esc(sec.line || '')}</h2><div class="section-body">${tmp.innerHTML}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function renderRelated(titles, currentTitle) {
+  const rg = document.getElementById('relatedGrid');
+  rg.innerHTML = '';
+  if (!titles.length) {
+    rg.innerHTML = '<div style="color:var(--muted);font-size:13px;grid-column:span 2">Keine gefunden.</div>';
+    return;
+  }
+  titles.slice(0, 8).forEach(t => {
+    const pill = document.createElement('div');
+    pill.className = 'rel-pill';
+    pill.textContent = t;
+    pill.onclick = async () => {
+      const pages = await fetchBatch([t]);
+      if (pages[0]) openArticle(pages[0]);
+      else showToast('Artikel nicht ladbar');
+    };
+    rg.appendChild(pill);
   });
 }
 
@@ -880,143 +797,87 @@ function closeModal() {
 }
 
 function updateModalSaveBtn() {
-  const btn = document.getElementById('modalSaveBtn');
+  const btn     = document.getElementById('modalSaveBtn');
   const isSaved = saved.some(s => s.title === modalArt?.title);
   btn.textContent = isSaved ? '✓ Gespeichert' : 'Speichern';
   btn.className   = 'modal-save-btn' + (isSaved ? ' is-saved' : '');
 }
 
-function toggleSaveFromModal() {
+function toggleModalSave() {
   if (!modalArt) return;
-  const idx = saved.findIndex(s => s.title === modalArt.title);
-  if (idx >= 0) {
-    saved.splice(idx, 1);
-    toast('Entfernt');
-  } else {
-    saveArticle(modalArt, false);
-    toast('♥ Gespeichert!');
-  }
-  persistSaved();
-  updateModalSaveBtn();
-  updateBadge();
+  const i = saved.findIndex(s => s.title === modalArt.title);
+  if (i >= 0) { saved.splice(i, 1); showToast('Entfernt'); }
+  else        { saveArticle(modalArt, false); showToast('♥ Gespeichert!'); }
+  persistSaved(); updateModalSaveBtn(); updateBadge();
 }
 
-function saveNote() {
-  if (!modalArt) return;
-  const note = document.getElementById('noteInput').value.trim();
-  const idx = saved.findIndex(s => s.title === modalArt.title);
-  if (idx >= 0) {
-    saved[idx].note = note;
-  } else {
-    // auto-save article when adding a note
-    saved.push({ ...modalArt, savedAt: Date.now(), note });
-    updateModalSaveBtn();
-    updateBadge();
-  }
-  persistSaved();
-  toast('Notiz gespeichert ✓');
-}
-
-// ══════════════════════════════════════════════
-//  SAVE / PERSIST
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  SAVE
+// ═══════════════════════════════════════════════
 function saveArticle(art, withToast = true) {
   if (saved.some(s => s.title === art.title)) return;
-  saved.push({ ...art, savedAt: Date.now(), note: '' });
-  persistSaved();
-  updateBadge();
-  if (withToast) toast('♥ Gespeichert!');
+  saved.push({ title: art.title, description: art.description || '', thumbnail: art.thumbnail, fullurl: art.fullurl, savedAt: Date.now() });
+  persistSaved(); updateBadge();
+  if (withToast) showToast('♥ Gespeichert!');
 }
 
-function persistSaved() {
-  localStorage.setItem('wikiswipe_saved', JSON.stringify(saved));
-}
+function persistSaved() { localStorage.setItem('ws_saved', JSON.stringify(saved)); }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SAVED VIEW
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function renderSaved() {
   const list = document.getElementById('savedList');
-  const countEl = document.getElementById('savedCount');
-  countEl.textContent = `${saved.length} Artikel gespeichert`;
-
+  document.getElementById('savedCount').textContent = `${saved.length} Artikel gespeichert`;
   if (!saved.length) {
-    list.innerHTML = `
-      <div class="saved-empty">
-        <div class="big">📚</div>
-        <h3>Noch leer</h3>
-        <p>Swipe nach rechts oder tippe auf ♥, um Artikel in dein Commonplace Buch zu speichern.</p>
-      </div>`;
+    list.innerHTML = `<div class="saved-empty"><div class="big">📚</div><h3>Noch leer</h3><p>Swipe nach rechts oder tippe ♥, um Artikel zu speichern.</p></div>`;
     return;
   }
-
   list.innerHTML = '';
   [...saved].reverse().forEach(art => {
-    const item = document.createElement('div');
+    const item  = document.createElement('div');
     item.className = 'saved-card';
-
     const emoji = guessEmoji(art);
     const thumbHtml = art.thumbnail?.source
       ? `<img class="saved-thumb" src="${esc(art.thumbnail.source)}" alt="">`
       : `<div class="saved-thumb">${emoji}</div>`;
-
-    const noteEl = art.note ? `<div class="saved-note-preview">📝 ${esc(art.note.slice(0,70))}${art.note.length>70?'…':''}</div>` : '';
-
-    item.innerHTML = `
-      ${thumbHtml}
-      <div class="saved-info">
-        <div class="saved-title">${esc(art.title)}</div>
-        <div class="saved-desc">${esc(art.description || '')}</div>
-        ${noteEl}
-      </div>
-      <button class="saved-del" title="Entfernen">×</button>
-    `;
-
+    item.innerHTML = `${thumbHtml}<div class="saved-info"><div class="saved-title">${esc(art.title)}</div><div class="saved-desc">${esc(art.description || '')}</div></div><button class="saved-del">×</button>`;
     item.querySelector('.saved-del').onclick = e => {
       e.stopPropagation();
       saved = saved.filter(s => s.title !== art.title);
-      persistSaved();
-      updateBadge();
-      renderSaved();
-      toast('Entfernt');
+      persistSaved(); updateBadge(); renderSaved(); showToast('Entfernt');
     };
-
-    item.onclick = () => openArticle(art);
+    item.onclick = async () => {
+      const pages = await fetchBatch([art.title]);
+      if (pages[0]) openArticle(pages[0]);
+      else { modalArt = art; openArticle(art); }
+    };
     list.appendChild(item);
   });
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  EXPORT
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function exportMarkdown() {
-  if (!saved.length) { toast('Noch nichts gespeichert'); return; }
-
+  if (!saved.length) { showToast('Noch nichts gespeichert'); return; }
   const lines = ['# Mein Commonplace Buch', '', `*${saved.length} Artikel · WikiSwipe*`, ''];
   [...saved].reverse().forEach(art => {
     const date = new Date(art.savedAt).toLocaleDateString('de-DE');
-    const wikiUrl = art.content_urls?.desktop?.page || `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(art.title)}`;
-    lines.push(`## [${art.title}](${wikiUrl})`);
+    const url  = art.fullurl || `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(art.title)}`;
+    lines.push(`## [${art.title}](${url})`);
     if (art.description) lines.push(`*${art.description}*`);
-    lines.push('');
-    if (art.extract) lines.push(art.extract.slice(0, 400) + (art.extract.length > 400 ? '…' : ''));
-    lines.push('');
-    if (art.note) { lines.push(`**Meine Notiz:** ${art.note}`); lines.push(''); }
-    lines.push(`*Gespeichert am ${date}*`);
-    lines.push('', '---', '');
+    lines.push('', `*Gespeichert am ${date}*`, '', '---', '');
   });
-
   const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'commonplace.md';
-  a.click();
-  toast('Markdown exportiert ✓');
+  a.href = URL.createObjectURL(blob); a.download = 'commonplace.md'; a.click();
+  showToast('Markdown exportiert ✓');
 }
 
-// ══════════════════════════════════════════════
-//  VIEW & UI HELPERS
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  VIEW / UI
+// ═══════════════════════════════════════════════
 function switchView(v) {
   document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
@@ -1026,77 +887,68 @@ function switchView(v) {
 }
 
 function updateBadge() {
-  const wrap = document.getElementById('savedBadgeWrap');
-  wrap.innerHTML = saved.length ? `<span class="badge">${saved.length}</span> ` : '';
+  document.getElementById('badgeWrap').innerHTML =
+    saved.length ? `<span class="badge">${saved.length}</span> ` : '';
 }
 
 function showLoading(on) {
-  const el = document.getElementById('loadingState');
-  el.style.display = on ? 'flex' : 'none';
+  document.getElementById('loadingState').style.display = on ? 'flex' : 'none';
 }
 
 function showEmpty() {
   const wrap = document.getElementById('stackWrap');
   const el = document.createElement('div');
   el.className = 'center-state';
-  el.innerHTML = `
-    <div class="big">🔄</div>
-    <h3>Alle Artikel gesehen!</h3>
-    <p>Du hast alles durchgescrollt. Lade neue zufällige Artikel oder lies in deinem Commonplace weiter.</p>
-    <button class="pill-btn" onclick="loadArticles()">Neue Artikel laden</button>
-  `;
+  el.innerHTML = `<div class="big">🔄</div><h3>Alle gesehen!</h3><p>Du hast alle Artikel durchgeblättert. Lade neue oder schau in dein Commonplace.</p><button class="pill-btn" onclick="loadArticles()">Neue laden</button>`;
   wrap.appendChild(el);
 }
 
-function toast(msg) {
+function showToast(msg) {
   const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove('show'), 2000);
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2000);
 }
 
-function esc(str) {
-  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function esc(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function guessEmoji(art) {
-  const t = ((art.title || '') + ' ' + (art.description || '')).toLowerCase();
-  if (/physics|chemistry|biology|mathematics|quantum|molecule/.test(t)) return '🔬';
-  if (/history|war|battle|empire|dynasty|century|ancient/.test(t)) return '📜';
-  if (/music|composer|band|album|symphony|opera/.test(t)) return '🎵';
-  if (/painting|art|artist|sculptor|gallery|museum/.test(t)) return '🎨';
-  if (/film|movie|actor|cinema|director/.test(t)) return '🎬';
-  if (/sport|football|soccer|olympic|athlete|tennis/.test(t)) return '⚽';
-  if (/country|city|capital|geography|mountain|river/.test(t)) return '🌍';
-  if (/philosophy|philosopher|ethics|logic/.test(t)) return '🤔';
-  if (/computer|software|programming|internet|algorithm/.test(t)) return '💻';
-  if (/space|planet|star|astronomy|galaxy|universe/.test(t)) return '🌌';
-  if (/animal|mammal|bird|species|fauna/.test(t)) return '🦁';
-  if (/plant|flower|tree|botany|flora/.test(t)) return '🌿';
-  if (/food|cuisine|cooking|recipe|dish/.test(t)) return '🍽️';
-  if (/novel|book|writer|author|literature|poetry/.test(t)) return '📖';
-  if (/architecture|building|bridge|structure/.test(t)) return '🏛️';
-  if (/economy|economics|finance|market/.test(t)) return '📈';
-  if (/religion|theology|church|temple|faith/.test(t)) return '✨';
-  if (/medicine|disease|health|hospital|anatomy/.test(t)) return '⚕️';
-  if (/law|court|justice|constitution/.test(t)) return '⚖️';
+  const t = ((art.title||'') + ' ' + (art.description||'')).toLowerCase();
+  if (/physics|chemistry|biology|mathematics|quantum/.test(t)) return '🔬';
+  if (/history|war|battle|empire|century|ancient/.test(t))    return '📜';
+  if (/music|composer|band|album|symphony|opera/.test(t))     return '🎵';
+  if (/painting|art|artist|sculptor|museum/.test(t))          return '🎨';
+  if (/film|movie|actor|cinema|director/.test(t))             return '🎬';
+  if (/sport|football|soccer|olympic|athlete/.test(t))        return '⚽';
+  if (/country|city|capital|geography|mountain/.test(t))      return '🌍';
+  if (/philosoph|ethics|logic/.test(t))                       return '🤔';
+  if (/computer|software|programming|algorithm/.test(t))      return '💻';
+  if (/space|planet|star|astronomy|galaxy/.test(t))           return '🌌';
+  if (/animal|mammal|bird|species/.test(t))                   return '🦁';
+  if (/plant|flower|tree|botany/.test(t))                     return '🌿';
+  if (/food|cuisine|cooking|dish/.test(t))                    return '🍽️';
+  if (/novel|book|author|literature|poetry/.test(t))          return '📖';
+  if (/architecture|building|bridge/.test(t))                 return '🏛️';
+  if (/economy|economics|finance|market/.test(t))             return '📈';
+  if (/medicine|disease|health|anatomy/.test(t))              return '⚕️';
+  if (/law|court|justice|constitution/.test(t))               return '⚖️';
   return '📄';
 }
 
-// ══════════════════════════════════════════════
-//  LANGUAGE
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  LANGUAGE PICKER
+// ═══════════════════════════════════════════════
 document.getElementById('langPicker').value = lang;
 document.getElementById('langPicker').addEventListener('change', e => {
   lang = e.target.value;
-  localStorage.setItem('wikiswipe_lang', lang);
+  localStorage.setItem('ws_lang', lang);
   loadArticles(true);
 });
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  BOOT
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 updateBadge();
 loadArticles();
 </script>
